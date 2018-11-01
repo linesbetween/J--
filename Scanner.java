@@ -327,15 +327,32 @@ class Scanner {
                 buffer.append("\"");
             }
             return new TokenInfo(STRING_LITERAL, buffer.toString(), line);
-        case '.':
-            nextCh();
-            return new TokenInfo(DOT, line);
+        case '.': 
+	    nextCh();
+	    //scan double starting with .
+	    if (isDigit(ch)){
+		buffer = new StringBuffer();
+		while (isDigit(ch)) {
+		    buffer.append(ch);
+		    nextCh();
+		}
+		if (ch == 'D' || ch == 'd'){
+		    buffer.append(ch);
+		    nextCh();
+		    return new TokenInfo(DOUBLE_LITERAL, buffer.toString(),line);
+		}
+	    }
+	    else{//scan dot		
+		return new TokenInfo(DOT, line);
+	    }
         case EOFCH:
             return new TokenInfo(EOF, line);
         case '0':
             // Handle only simple decimal integers for now.
             nextCh();
             return new TokenInfo(INT_LITERAL, "0", line);
+     
+	        
         case '1':
         case '2':
         case '3':
@@ -350,7 +367,13 @@ class Scanner {
                 buffer.append(ch);
                 nextCh();
             }
-            return new TokenInfo(INT_LITERAL, buffer.toString(), line);
+	    if (ch == 'l' || ch == 'L'){
+		buffer.append(ch);
+		nextCh();
+		return new TokenInfo(LONG_LITERAL, buffer.toString(), line);
+	    }
+	    else
+		return new TokenInfo(INT_LITERAL, buffer.toString(), line);
         default:
             if (isIdentifierStart(ch)) {
                 buffer = new StringBuffer();
