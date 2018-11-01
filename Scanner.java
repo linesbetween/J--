@@ -163,6 +163,8 @@ class Scanner {
         
         line = input.line();
         switch (ch) {
+
+	    //Separators
         case '(':
             nextCh();
             return new TokenInfo(LPAREN, line);
@@ -187,6 +189,9 @@ class Scanner {
         case ',':
             nextCh();
             return new TokenInfo(COMMA, line);
+	case ':':
+	    nextCh();
+	    return new TokenInfo(COL, line);
         case '=':
             nextCh();
             if (ch == '=') {
