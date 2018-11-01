@@ -25,10 +25,19 @@ enum TokenKind {
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
     LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
     DIV("/"),REM("%"),ALS("<<"),ARS(">>"),LRS(">>>"), UCOMPLE("~"),
-    OR("|"),XOR("^"),AND("&"),UPLUS("+"),Q(""),TILDE("~"),NEQUAL("!="),DIV_ASSIGN("/="),
-    MINUS_ASSIGN("-="),MINUS_MINUS("--"),STAR_MINUS("*-"),MODE("%"),MODE_ASSIGN("%="),
-    RSHIFT(">>"),RSHIFT_ASSIGN(">>="),RRSHIFT(">>>"),RRSHIFT_ASSIGN(">>>="),LESS_EQUAL(">="),
-    LSHIFT("<<"),LSHIFT_ASSIGN("<<="),LESS("<"),POWER("^"),POWER_ASSIGN("^="),
+    OR("|"),LOR("||"),OR_ASSIGN("|="),
+    XOR("^"),
+    AND("&"),AND_ASSIGN("&="),
+    UPLUS("+"),Q(""),
+    NEQUAL("!="),//done
+    DIV_ASSIGN("/="),//done
+    DEC_ASSIGN("-="),DEC_DEC("--"),//done
+    STAR_ASSIGN("*="),//done
+    MODE("%"),MODE_ASSIGN("%="),//done
+    RSHIFT_ASSIGN(">>="),RRSHIFT_ASSIGN(">>>="),LESS_EQUAL(">="),//done
+    LSHIFT_ASSIGN("<<="),LESS("<"),//done
+    XOR_ASSIGN("^="),//done
+    SEL("?"),
   
 
     // Separators
