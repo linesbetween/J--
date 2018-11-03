@@ -1008,13 +1008,98 @@ public class Parser {
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
         JExpression lhs = conditionalAndExpression();
+
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
         } else if (have(PLUS_ASSIGN)) {
             return new JPlusAssignOp(line, lhs, assignmentExpression());
-        } else {
+	}
+	  else if (have(DEC_ASSIGN)) {
+            return new JDecAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(STAR_ASSIGN)) {
+            return new JStarAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(DIV_ASSIGN)) {
+	      return new JDivAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(MODE_ASSIGN)) {
+            return new JModeAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(PLUS_ASSIGN)) {
+            return new JRShiftAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(RSHIFT_ASSIGN)) {
+            return new JRRShiftAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(RRSHIFT_ASSIGN)) {
+            return new JLShiftAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(LSHIFT_ASSIGN)) {
+            return new JLShiftAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(AND_ASSIGN)) {
+            return new JAndAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(OR_ASSIGN)) {
+            return new JOrAssignOp(line, lhs, assignmentExpression());
+	  }
+	  else if (have(XOR_ASSIGN)) {
+            return new JXorAssignOp(line, lhs, assignmentExpression());
+	  }
+         else {
             return lhs;
         }
+    }
+
+     /**
+     * Parse a conditional expression.
+     * 
+     * <pre>
+     *   conditionalExpression ::= conditionalOrExpression // level 12
+     *                                  [? assignmentExpression : conditionalExpression]
+     * </pre>
+     * 
+     * @return an AST for a conditionalExpression.
+     */
+    private JExpression conditionalExpression() {
+        int line = scanner.token().line();
+        JExpression lhs = conditionalOrExpression();
+	if (have(SEL)){
+	    JExpression  mhs= assignmentExpression(); //middle hand side
+	    mustBe(COL); 
+	    JExpression  rhs = conditionalExpression();
+	    return new JConditionalOp(line,lhs,mhs,rhs );
+	}
+	else {
+	    return lhs;
+	}
+    }
+
+
+    /**
+     * Parse a conditional-or expression.
+     * 
+     * <pre>
+     *   conditionalOrExpression ::= conditionalAndExpression // level 11
+     *                                  {LOR conditionalAndExpression}
+     * </pre>
+     * 
+     * @return an AST for a conditionalExpression.
+     */
+
+    private JExpression conditionalOrExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = conditionalAndExpression();
+        while (more) {
+            if (have(LOR)) {
+                lhs = new JLogicalOrOp(line, lhs, conditionalAndExpression());
+            } else {
+                more = false;
+            }
+        }
+        return lhs;
     }
 
     /**
@@ -1169,12 +1254,42 @@ public class Parser {
         }
     }
 
+     /**
+     * Parse a shift expression.
+     * 
+     * <pre>
+     *  shiftExpression ::= additiveExpression //level 4
+     *			{(ALS | ARS | LRS) additiveExpression}
+     * </pre>
+     * 
+     * @return an AST for a bitShiftExpression
+     */
+
+    private JExpression shiftExpression() {
+        int line = scanner.token().line();
+        boolean more = true;
+        JExpression lhs = additiveExpression();
+        while (more) {
+            if (have(ALS)) {
+                lhs = new JArithLeftShiftOp(line, lhs, additiveExpression());
+            } else if (have(ARS)){
+                lhs = new JArithRightShiftOp(line, lhs,additiveExpression());
+            } else if (have (LRS)){
+		lhs = new JLogicRightShiftOp(line, lhs, additiveExpression());
+	    }
+	    else{
+		more = false;
+	    }
+        }
+        return lhs;
+    }    
+    
     /**
      * Parse an additive expression.
      * 
      * <pre>
      *   additiveExpression ::= multiplicativeExpression // level 3
-     *                            {MINUS multiplicativeExpression}
+     *                            {(PLUS | MINUS) multiplicativeExpression}
      * </pre>
      * 
      * @return an AST for an additiveExpression.
@@ -1228,36 +1343,7 @@ public class Parser {
         return lhs;
     }
 
-     /**
-     * Parse a shift expression.
-     * 
-     * <pre>
-     *  shiftExpression ::= additiveExpression //level 4
-     *			{(ALS | ARS | LRS) additiveExpression}
-     * </pre>
-     * 
-     * @return an AST for a bitShiftExpression
-     */
 
-    private JExpression shiftExpression() {
-        int line = scanner.token().line();
-        boolean more = true;
-        JExpression lhs = additiveExpression();
-        while (more) {
-            if (have(ALS)) {
-                lhs = new JArithLeftShiftOp(line, lhs, additiveExpression());
-            } else if (have(ARS)){
-                lhs = new JArithRightShiftOp(line, lhs,additiveExpression());
-            } else if (have (LRS)){
-		lhs = new JLogicRightShiftOp(line, lhs, additiveExpression());
-	    }
-
-	    else{
-		more = false;
-	    }
-        }
-        return lhs;
-    }
 
     /**
      * Parse an unary expression.
@@ -1279,6 +1365,9 @@ public class Parser {
             return new JNegateOp(line, unaryExpression());
         } else if (have (UPLUS)){
 	    return new JUPlusOp (line, unaryExpression());
+	}
+	else if (have (UMINUS)){
+	    return new JUMinusOp(line, unaryExpression());
 	}
 	else {
             return simpleUnaryExpression();
@@ -1520,7 +1609,7 @@ public class Parser {
      * Parse a literal.
      * 
      * <pre>
-     *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL | ILONG_LITERAL | DOUBLE_LITERAL
+     *   literal ::= INT_LITERAL | CHAR_LITERAL | STRING_LITERAL | LONG_LITERAL | DOUBLE_LITERAL
      *             | TRUE        | FALSE        | NULL           
      * </pre>
      * 

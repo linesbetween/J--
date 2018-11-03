@@ -190,3 +190,447 @@ class JPlusAssignOp extends JAssignment {
     }
 
 }
+
+
+/**
+ * The AST node for a -= expression. A -= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JDecAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a += expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JDecAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "-=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs -= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     /**
+     * Code generation for an assignment involves, generating code for loading
+     * any necessary Lvalue onto the stack, for loading the Rvalue, for (unless
+     * a statement) copying the Rvalue to its proper place on the stack, and for
+     * doing the store.
+     * 
+     * @param output
+     *            the code emitter (basically an abstraction for producing the
+     *            .class file).
+     */
+
+    public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a *= expression. A *= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JStarAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a *= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JStarAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "*=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs *= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a -= expression. A -= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JDivAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a += expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JDivAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "/=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs /= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a -= expression. A -= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JModeAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a %= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JModeAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "%=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs %= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a >>= expression. A >>= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JRShiftAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a >>= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JRShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs >>= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+
+/**
+ * The AST node for a >>>= expression. A >>>= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JRRShiftAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a >>>= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JRRShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, ">>>=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs >>>= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a <<= expression. A <<= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JLShiftAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a <<= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JLShiftAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "<<=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs <<= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+    
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a &= expression. A &= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JAndAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a &= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JAndAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "&=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs &= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+/**
+ * The AST node for a |= expression. A |= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JOrAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a |= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JOrAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "|=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs |= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}
+
+
+/**
+ * The AST node for a ^= expression. A ^= expression has two operands: a lhs and
+ * a rhs.
+ */
+
+class JXorAssignOp extends JAssignment {
+
+    /**
+     * Constructs the AST node for a ^= expression given its lhs and rhs
+     * operands.
+     * 
+     * @param line
+     *            line in which the assignment expression occurs in the source
+     *            file.
+     * @param lhs
+     *            the lhs operand.
+     * @param rhs
+     *            the rhs operand.
+     */
+
+    public JXorAssignOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "^=", lhs, rhs);
+    }
+
+      /**
+     * Analyzes the lhs and rhs, rewrites rhs as lhs ^= rhs (string concatenation)
+     * if lhs is of type {@code String}, and sets the result type.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+     public void codegen(CLEmitter output) {
+       
+    }
+}

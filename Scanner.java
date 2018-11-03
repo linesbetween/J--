@@ -233,7 +233,7 @@ class Scanner {
 	    else {
 	    return new TokenInfo(REM, line);
 	    }
-        case '+':
+        case '+': 
             nextCh();
             if (ch == '=') {
                 nextCh();
@@ -244,7 +244,7 @@ class Scanner {
             } else {
 		//get char before 
 		lastCh = buffer.charAt(buffer.length()-1);
-		if (isDigit(lastCh))
+		if (isDigit(lastCh) || isIdentifierPart(lastCh))//TODO: not recognized 
 		    return new TokenInfo(PLUS, line);
 		else
 		    return new TokenInfo(UPLUS, line);

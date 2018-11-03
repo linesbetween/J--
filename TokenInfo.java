@@ -23,7 +23,7 @@ enum TokenKind {
     
     // Operators
     ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
-    LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="), STAR("*"),
+    LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="),
     DIV("/"),REM("%"),ALS("<<"),ARS(">>"),LRS(">>>"), UCOMPLE("~"),
     OR("|"),LOR("||"),OR_ASSIGN("|="),
     XOR("^"),
@@ -32,7 +32,7 @@ enum TokenKind {
     NEQUAL("!="),//done
     DIV_ASSIGN("/="),//done
     DEC_ASSIGN("-="),DEC_DEC("--"),//done
-    STAR_ASSIGN("*="),//done
+    STAR("*"),STAR_ASSIGN("*="),//done
     MODE("%"),MODE_ASSIGN("%="),//done
     RSHIFT_ASSIGN(">>="),RRSHIFT_ASSIGN(">>>="),LESS_EQUAL(">="),//done
     LSHIFT_ASSIGN("<<="),LESS("<"),//done

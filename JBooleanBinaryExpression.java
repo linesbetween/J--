@@ -124,6 +124,8 @@ class JEqualOp extends JBooleanBinaryExpression {
 
 }
 
+
+
 /**
  * The AST node for a logical AND (&amp;&amp;) expression. Implements 
  * short-circuiting branching.
@@ -191,4 +193,37 @@ class JLogicalAndOp extends JBooleanBinaryExpression {
         }
     }
 
+}
+
+
+
+
+class JLogicalOrOp extends JBooleanBinaryExpression {
+
+    /**
+     * Constructs an AST node for a logical OR expression given its line number,
+     * and lhs and rhs operands.
+     * 
+     * @param line
+     *            line in which the logical OR expression occurs in the source
+     *            file.
+     * @param lhs
+     *            lhs operand.
+     * @param rhs
+     *            rhs operand.
+     */
+
+    public JLogicalOrOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "||", lhs, rhs);
+    }
+
+       public JExpression analyze(Context context) {
+      
+        return this;
+    }
+
+     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+     
+    }
+    
 }
