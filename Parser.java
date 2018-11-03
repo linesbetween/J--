@@ -961,6 +961,8 @@ public class Parser {
         int line = scanner.token().line();
         JExpression expr = expression();
         if (expr instanceof JAssignment || expr instanceof JPreIncrementOp
+	                                || expr instanceof JPostIncrementOp
+	                                || expr instanceof JPreDecrementOp
                                         || expr instanceof JPostDecrementOp
                                         || expr instanceof JMessageExpression
                                         || expr instanceof JSuperConstruction
@@ -1007,7 +1009,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalExpression();
 
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
@@ -1066,7 +1068,7 @@ public class Parser {
         int line = scanner.token().line();
         JExpression lhs = conditionalOrExpression();
 	if (have(SEL)){
-	    JExpression  mhs= assignmentExpression(); //middle hand side
+	    JExpression  mhs= assignmentExpression(); 
 	    mustBe(COL); 
 	    JExpression  rhs = conditionalExpression();
 	    return new JConditionalOp(line,lhs,mhs,rhs );
@@ -1221,7 +1223,11 @@ public class Parser {
         while (more) {
             if (have(EQUAL)) {
                 lhs = new JEqualOp(line, lhs, relationalExpression());
-            } else {
+            }
+	    else if (have(NEQUAL)){
+		lhs = new JNEqualOp(line, lhs,relationalExpression());
+	    }
+	    else {
                 more = false;
             }
         }
@@ -1232,8 +1238,8 @@ public class Parser {
      * Parse a relational expression.
      * 
      * <pre>
-     *   relationalExpression ::= additiveExpression  // level 5
-     *                              [(GT | LE) additiveExpression 
+     *   relationalExpression ::= shiftExpression  // level 5
+     *                              [(GT | LE ) shiftExpression 
      *                              | INSTANCEOF referenceType]
      * </pre>
      * 
@@ -1243,9 +1249,15 @@ public class Parser {
     private JExpression relationalExpression() {
         int line = scanner.token().line();
         JExpression lhs = shiftExpression();
-        if (have(GT)) {
+        if (have(GT)) {//>
             return new JGreaterThanOp(line, lhs, shiftExpression());
-        } else if (have(LE)) {
+        } else if (have (LS)) {//<
+	    return new JLessThanOp(line, lhs, shiftExpression());
+	}
+	else if (have (GE)){//>=
+	    return new JGreaterEqualOp(line, lhs, shiftExpression());
+	}
+	else if (have(LE)) {//<=
             return new JLessEqualOp(line, lhs, shiftExpression());
         } else if (have(INSTANCEOF)) {
             return new JInstanceOfOp(line, lhs, referenceType());
@@ -1360,16 +1372,14 @@ public class Parser {
     private JExpression unaryExpression() {
         int line = scanner.token().line();
         if (have(INC)) {
-            return new JPreIncrementOp(line, unaryExpression());
-        } else if (have(MINUS)) {
-            return new JNegateOp(line, unaryExpression());
-        } else if (have (UPLUS)){
-	    return new JUPlusOp (line, unaryExpression());
-	}
-	else if (have (UMINUS)){
-	    return new JUMinusOp(line, unaryExpression());
-	}
-	else {
+            return new JPreIncrementOp(line, unaryExpression());//pre ++ 
+        } else if (have(DEC)){
+	    return new JPreDecrementOp(line,unaryExpression()); //pre -- 
+	} else if (have(MINUS)) {
+            return new JNegateOp(line, unaryExpression()); // -
+        } else if (have (UPLUS)){ //+
+	    return new JUPlusOp(line, unaryExpression());
+	} else {
             return simpleUnaryExpression();
         }
     }
@@ -1427,10 +1437,16 @@ public class Parser {
         while (see(DOT) || see(LBRACK)) {
             primaryExpr = selector(primaryExpr);
         }
-        while (have(DEC)) {
-            primaryExpr = new JPostDecrementOp(line, primaryExpr);
+        while (see(DEC) || see(INC)) {
+	    if (have(DEC)){
+		primaryExpr =  new JPostDecrementOp(line, primaryExpr);
+	    }
+	    else if (have(INC)){
+		primaryExpr = new JPostIncrementOp(line, primaryExpr);
+	    }
         }
-        return primaryExpr;
+	
+	return primaryExpr;
     }
 
     /**

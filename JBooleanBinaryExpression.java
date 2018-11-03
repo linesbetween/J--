@@ -124,6 +124,37 @@ class JEqualOp extends JBooleanBinaryExpression {
 
 }
 
+/**
+ * The AST node for an equality (==) expression. Implements short-circuiting
+ * branching.
+ */
+
+class JNEqualOp extends JBooleanBinaryExpression {
+
+    /**
+     * Constructs an AST node for an inequality expression.
+     * 
+     * @param line
+     *            line number in which the inequality expression occurs in the
+     *            source file.
+     * @param lhs
+     *            lhs operand.
+     * @param rhs
+     *            rhs operand.
+     */
+
+    public JNEqualOp(int line, JExpression lhs, JExpression rhs) {
+        super(line, "!=", lhs, rhs);
+    }
+
+     public JExpression analyze(Context context) {
+        return this;
+    }
+      public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
+      
+    }
+}
+
 
 
 /**

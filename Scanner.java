@@ -253,7 +253,7 @@ class Scanner {
             nextCh();
             if (ch == '-') {
                 nextCh();
-                return new TokenInfo(DEC_DEC, line);
+                return new TokenInfo(DEC, line);
             }else if (ch == '='){
 	        nextCh();
                 return new TokenInfo(DEC_ASSIGN, line);
@@ -301,7 +301,7 @@ class Scanner {
 	    }
 	    else if (ch == '='){
 		nextCh();
-		return new TokenInfo(LESS_EQUAL, line);
+		return new TokenInfo(LE, line);
 	    }
 	    else {
 		return new TokenInfo(GT, line);
@@ -323,7 +323,7 @@ class Scanner {
 		}
 	    }
 	    else {
-		return new TokenInfo(LESS,line);
+		return new TokenInfo(LS,line);
 		// reportScannerError("Operator < is not supported in j--.");
                 //return getNextToken();
             }

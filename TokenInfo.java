@@ -22,8 +22,9 @@ enum TokenKind {
     VOID("void"), WHILE("while"), BREAK("break"),CASE("case"),CATCH("catch"),CONTINUE("continue"),DEFAULT("default"), DO("do"),DOUBLE("double"), FINAL("final"), FINALLY("finally"),FOR("for"), IMPLEMENTS("implements"),INTERFACE("interface"),LONG("long"),SWITCH("switch"),THROW("throw"),THROWS("throws"),TRY("try"),
     
     // Operators
-    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), INC("++"), LAND("&&"), 
-    LE("<="), LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="),
+    ASSIGN("="), DEC("--"), EQUAL("=="), GT(">"), LS("<") ,GE(">="),LE("<="),
+    INC("++"), LAND("&&"), 
+    LNOT("!"), MINUS("-"), PLUS("+"), PLUS_ASSIGN("+="),
     DIV("/"),REM("%"),ALS("<<"),ARS(">>"),LRS(">>>"), UCOMPLE("~"),
     OR("|"),LOR("||"),OR_ASSIGN("|="),
     XOR("^"),
@@ -31,11 +32,11 @@ enum TokenKind {
     UPLUS("+"),Q(""),
     NEQUAL("!="),//done
     DIV_ASSIGN("/="),//done
-    DEC_ASSIGN("-="),DEC_DEC("--"),//done
+    DEC_ASSIGN("-="),//done
     STAR("*"),STAR_ASSIGN("*="),//done
     MODE("%"),MODE_ASSIGN("%="),//done
-    RSHIFT_ASSIGN(">>="),RRSHIFT_ASSIGN(">>>="),LESS_EQUAL(">="),//done
-    LSHIFT_ASSIGN("<<="),LESS("<"),//done
+    RSHIFT_ASSIGN(">>="),RRSHIFT_ASSIGN(">>>="),//done
+    LSHIFT_ASSIGN("<<="),//done
     XOR_ASSIGN("^="),//done
     SEL("?"),
   

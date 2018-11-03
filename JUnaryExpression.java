@@ -346,6 +346,91 @@ class JPreIncrementOp extends JUnaryExpression {
 
 }
 
+
+/**
+ * The AST node for a expr++ expression.
+ */
+
+class JPostIncrementOp extends JUnaryExpression {
+
+    /**
+     * Constructs an AST node for a ++expr given its line number, and the
+     * operand.
+     * 
+     * @param line
+     *            line in which the expression occurs in the source file.
+     * @param arg
+     *            the operand.
+     */
+
+    public JPostIncrementOp(int line, JExpression arg) {
+        super(line, "++post", arg);
+    }
+
+    /**
+     * Analyzes the operand as a lhs (since there is a side effect), check types
+     * and determine the type of the result.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+   
+
+    public void codegen(CLEmitter output) {
+      
+    }
+
+}
+
+/**
+ * The AST node for a --expr expression.
+ */
+
+class JPreDecrementOp extends JUnaryExpression {
+
+    /**
+     * Constructs an AST node for a --expr given its line number, and the
+     * operand.
+     * 
+     * @param line
+     *            line in which the expression occurs in the source file.
+     * @param arg
+     *            the operand.
+     */
+
+    public JPreDecrementOp(int line, JExpression arg) {
+        super(line, "pre--", arg);
+    }
+
+    /**
+     * Analyzes the operand as a lhs (since there is a side effect), check types
+     * and determine the type of the result.
+     * 
+     * @param context
+     *            context in which names are resolved.
+     * @return the analyzed (and possibly rewritten) AST subtree.
+     */
+
+    public JExpression analyze(Context context) {
+       
+        return this;
+    }
+
+   
+
+    public void codegen(CLEmitter output) {
+      
+    }
+
+}
+
 /**
  * The AST node for a unary negation (-) expression.
  */
