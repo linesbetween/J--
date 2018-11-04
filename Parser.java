@@ -758,15 +758,14 @@ public class Parser {
 
 private JStatement switchBlockStatementGroup() {//TODO: JStatement or JBlock
 	int line = scanner.token().line();
-        ArrayList<JExpression>switchLabels =  
-                                       new ArrayList<JExpression>();
+        ArrayList<JExpression>switchLabels =  new ArrayList<JExpression>();
 	do {
 	    switchLabels.add(switchLabel());
 	    }
 	while (!see(RCURLY) && !see(EOF));
 	    
         ArrayList<JStatement> blockStatements = new ArrayList<JStatement>();
-	 while (!see(CASE) && !see(RCURLY) && !see(DEFAULT)) {
+	 while (!see(RCURLY) && !see(EOF)) {
 	     blockStatements.add(blockStatement());
 	    }
 
@@ -787,17 +786,16 @@ private JStatement switchBlockStatementGroup() {//TODO: JStatement or JBlock
 
 private JExpression switchLabel(){
     int line = scanner.token().line();
-    JExpression expr = null;
+    //JExpression expr = null;
     if(have(CASE)){
-	expr = expression();//TODO
+	expr = expression();
 	mustBe(COL);
-	return new JSwitchLabel(line,expr);
-	
+	return new JSwitchLabel(line,expr);	
     }
-    else{
+    else{//must be a default
 	mustBe(DEFAULT);
 	mustBe(COL);
-	return expr; //new JSwitchLabelDefault(line);
+	return new JSwitchLabelDefault(line);
 	
     }
 }
