@@ -634,6 +634,7 @@ public class Parser {
      *   statement ::= block
      *               | IF parExpression statement [ELSE statement]
      *               | WHILE parExpression statement 
+     *               | SWITCH parExression {{switchBlockStatementGroup}}
      *               | RETURN [expression] SEMI
      *               | SEMI 
      *               | statementExpression SEMI
@@ -655,7 +656,18 @@ public class Parser {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
-        } else if (have(RETURN)) {
+        }else if (have(SWITCH)){
+	    JExpression test = parExpression();
+	    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+	    mustBe(LCURLY);
+	    while (!see(RCURLY) && !see(EOF)) {
+		statements.add(switchBlockStatementGroup());
+	    }
+	    mustBe(RCURLY);
+	    return new JSwitchStatement(line, test, statements);
+	   
+        }
+     	else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
             } else {
@@ -668,6 +680,7 @@ public class Parser {
         } else { // Must be a statementExpression
             JStatement statement = statementExpression();
             mustBe(SEMI);
+		
             return statement;
         }
     }
@@ -732,6 +745,65 @@ public class Parser {
         return expr;
     }
 
+     /**
+     * Parse a switch block statement group.
+     * 
+     * <pre>
+     *   switchBlockStatementGroup ::= switchLabel LCURLY switchLabel RCURLY 
+     *                               LCURLY blockStatement RCURLY
+     * </pre>
+     * 
+     * @return an AST for a switchblockstatemengroup.
+     */
+
+private JStatement switchBlockStatementGroup() {//TODO: JStatement or JBlock
+	int line = scanner.token().line();
+        ArrayList<JExpression>switchLabels =  
+                                       new ArrayList<JExpression>();
+	do {
+	    switchLabels.add(switchLabel());
+	    }
+	while (!see(RCURLY) && !see(EOF));
+	    
+        ArrayList<JStatement> blockStatements = new ArrayList<JStatement>();
+	 while (!see(CASE) && !see(RCURLY) && !see(DEFAULT)) {
+	     blockStatements.add(blockStatement());
+	    }
+
+	 return new JSwitchBlockStatementGroup(line, switchLabels,blockStatements);
+    }
+
+ /**
+     * Parse a switch label.
+     * 
+     * <pre>
+     *   switchLabel ::= CASE  expression COL 
+     *                  |DEFUALT COL
+     *                              
+     * </pre>
+     * 
+     * @return an AST for a switch label.
+     */
+
+private JExpression switchLabel(){
+    int line = scanner.token().line();
+    JExpression expr = null;
+    if(have(CASE)){
+	expr = expression();//TODO
+	mustBe(COL);
+	return new JSwitchLabel(line,expr);
+	
+    }
+    else{
+	mustBe(DEFAULT);
+	mustBe(COL);
+	return expr; //new JSwitchLabelDefault(line);
+	
+    }
+}
+
+
+    
     /**
      * Parse a local variable declaration statement.
      * 
@@ -1009,7 +1081,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalExpression();
+        JExpression lhs = conditionalAndExpression();
 
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
@@ -1373,13 +1445,15 @@ public class Parser {
         int line = scanner.token().line();
         if (have(INC)) {
             return new JPreIncrementOp(line, unaryExpression());//pre ++ 
-        } else if (have(DEC)){
-	    return new JPreDecrementOp(line,unaryExpression()); //pre -- 
-	} else if (have(MINUS)) {
+        } else if (have(MINUS)) {
             return new JNegateOp(line, unaryExpression()); // -
         } else if (have (UPLUS)){ //+
-	    return new JUPlusOp(line, unaryExpression());
-	} else {
+	    return new JUPlusOp (line, unaryExpression());
+	}
+	else if (have (DEC)){
+	    return new JPreDecrementOp(line,unaryExpression()); //pre -- 
+	}
+	else {
             return simpleUnaryExpression();
         }
     }
@@ -1406,7 +1480,7 @@ public class Parser {
             return new JLogicalNotOp(line, unaryExpression());
         }
 	else if (have(UCOMPLE)){
-	    return new JUCompleOp(line, unaryExpression());
+	    	    return new JUCompleOp(line, unaryExpression());
 	}
 	else if (seeCast()) {
             mustBe(LPAREN);
