@@ -1,0 +1,98 @@
+TokenInfo.java:     * Semantic text (if any). For example, the identifier name when the token
+Parser.java:            // A qualified identifier is ok
+Parser.java:            // A qualified identifier is ok
+Parser.java:     * Parse a qualified identifier.
+NControlFlowGraph.java:    /** Unique identifier of ths block. */
+NControlFlowGraph.java:     * Construct a block given its unique identifier.
+NControlFlowGraph.java:     * Return a string identifier of this block.
+NControlFlowGraph.java:     * @return string identifier of this block.
+NControlFlowGraph.java:     * The instruction identifier for the first LIR instruction.
+NControlFlowGraph.java:     * @return the instruction identifier.
+NControlFlowGraph.java:     * The instruction identifier for the last LIR instruction.
+NControlFlowGraph.java:     * @return the instruction identifier.
+NControlFlowGraph.java:    /** block identifier. */
+NControlFlowGraph.java:    /** HIR instruction identifier. */
+NControlFlowGraph.java:    /** HIR instruction identifier. */
+NControlFlowGraph.java:    /** Virtual register identifier. */
+NControlFlowGraph.java:    /** Loop identifier. */
+JVariable.java: * The AST node for an identifier used as a primary expression.
+JVariable.java:     * Returns the identifier name.
+JVariable.java:     * @return the identifier name.
+JVariable.java:     * Returns the identifier's definition.
+JVariable.java:     * @return the identifier's definition.
+JVariable.java:     * Analyzing identifiers involves resolving them in the context. Identifiers
+JVariable.java:     * Analyze the identifier as used on the lhs of an assignment.
+JVariable.java:     * in implementing the identifier expression.
+NHIRInstruction.java:    /** Unique identifier of this instruction. */
+NHIRInstruction.java:     * this HIR instruction and the unique identifier for this instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     * this HIR instruction, unique identifier for this instruction, the short
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     * Returns the identifier of this instruction with the short type name
+NHIRInstruction.java:     * @return the identifier of this IR instruction with the short type name
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier for the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+NHIRInstruction.java:     *            identifier of the instruction.
+Parser.java~:            // A qualified identifier is ok
+Parser.java~:            // A qualified identifier is ok
+Parser.java~:     * Parse a qualified identifier.
+Scanner.java~:                String identifier = buffer.toString();
+Scanner.java~:                if (reserved.containsKey(identifier)) {
+Scanner.java~:                    return new TokenInfo(reserved.get(identifier), line);
+Scanner.java~:                    return new TokenInfo(IDENTIFIER, identifier, line);
+Scanner.java~:     * Returns true if the specified character can start an identifier name;
+Scanner.java~:     * Returns true if the specified character can be part of an identifier name;
+NLIRInstruction.java:    /** Unique identifier of this instruction. */
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier for the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+NLIRInstruction.java:     *            identifier of the instruction.
+#Parser.java#:            // A qualified identifier is ok
+#Parser.java#:            // A qualified identifier is ok
+#Parser.java#:     * Parse a qualified identifier.
+j--.jj: * Parse a qualified identifier.
+TokenInfo.java~:     * Semantic text (if any). For example, the identifier name when the token
+IDefn.java: * A definition of a type name. In the first instance, an identifier, but later
+JExpression.java:        // identifier) expressions must override this method.
+Type.java: * Class types (reference types that are represented by the identifiers
+Type.java: * Any reference type that can be denoted as a (possibly qualified) identifier.
+Type.java:     * The line in which the identifier occurs in the source file.
+Type.java:    /** The identifier's name. */
+Type.java:     *            the line in which the identifier occurs in the source file.
+Type.java:     *            fully qualified name for the identifier.
+Type.java:     * Returns the line in which the identifier occurs in the source file.
+Type.java:     * Returns the JVM name for this (identifier) type.
+LookaheadScanner.java:     * at a token's semantic info (for example an identifier's name), after 
+Scanner.java:                String identifier = buffer.toString();
+Scanner.java:                if (reserved.containsKey(identifier)) {
+Scanner.java:                    return new TokenInfo(reserved.get(identifier), line);
+Scanner.java:                    return new TokenInfo(IDENTIFIER, identifier, line);
+Scanner.java:     * Returns true if the specified character can start an identifier name;
+Scanner.java:     * Returns true if the specified character can be part of an identifier name;

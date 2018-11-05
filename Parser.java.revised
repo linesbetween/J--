@@ -773,29 +773,29 @@ private JStatement switchBlockStatementGroup() {
         ArrayList<JExpression>switchLabels =  new ArrayList<JExpression>();
 	ArrayList<JStatement> blockStatements = new ArrayList<JStatement>();
 
-	if (!see(DEFAULT)){//non-default cases
+//if (!see(DEFAULT)){//non-default cases
 	    do {
 		switchLabels.add(switchLabel());
-	    }
-	    while (see(CASE) && !see(RCURLY) && !see(EOF));
-	    //RCURLY: case: and empty statements only
-
-	    while ( !see(CASE) && !see(RCURLY) && !see(DEFAULT)) {
+		while ( !see(CASE) && !see(RCURLY) && !see(DEFAULT)) {
 		//RCURLY: case: only
 		blockStatements.add(blockStatement());
 	    }
+	    }
+	    while (see(CASE) || see(DEFAULT)); //&& !see(RCURLY) && !see(EOF));
+	    //RCURLY: case: and empty statements only
 
 
 	    return new JSwitchBlockStatementGroup(line, switchLabels,blockStatements);
-	}
+	//}
 
-	else{//default case
+/*	else{//default case
 	    switchLabels.add(switchLabel());
 	    while (!see(RCURLY)){
 	       blockStatements.add(blockStatement());
 	    }
 	    return new JSwitchBlockStatementGroup(line, switchLabels,blockStatements);
 	}
+*/
     }
 
  /**
@@ -1104,7 +1104,7 @@ private JExpression switchLabel(){
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalExpression();
+        JExpression lhs = conditionalAndExpression();
 
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());

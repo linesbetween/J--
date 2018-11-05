@@ -72,11 +72,14 @@ class JSwitchStatement extends JStatement {
         p.indentRight();
         p.printf("<CaseExpression>\n");
         p.indentRight();
-	// test.writeToStdOut(p);
+	test.writeToStdOut(p);
         p.indentLeft();
         p.printf("</TestExpression>\n");
         p.printf("<SwitchBlock>\n");
         p.indentRight();
+	for(JStatement statement : switchBlock) {
+		statement.writeToStdOut(p);
+	}
         //switchBlock.writeToStdOut(p);
         p.indentLeft();
         p.printf("</SwitchBlock>\n");
