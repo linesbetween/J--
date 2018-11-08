@@ -90,7 +90,7 @@ class Scanner {
 	reserved.put(CASE.image(), CASE);
         reserved.put(CATCH.image(), CATCH);
         reserved.put(CONTINUE.image(), CONTINUE);
-        reserved.put(DEFAULT.image(), DEFAULT);
+        reserved.put(DEF.image(), DEF);
         reserved.put(DO.image(), DO);
         reserved.put(DOUBLE.image(), DOUBLE);
         reserved.put(FINAL.image(), FINAL);

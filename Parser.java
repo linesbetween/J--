@@ -656,7 +656,15 @@ public class Parser {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
-        }else if (have(SWITCH)){
+        }
+	else if (have(DO)){
+	    JStatement statement = statement();
+	    mustBe(WHILE);
+	    JExpression test = parExpression();
+	    mustBe(SEMI);
+	    return new JDoWhileStatement(line, test, statement);
+	    }
+	else if (have(SWITCH)){
 	    JExpression test = parExpression();
 	    ArrayList<JStatement> statements = new ArrayList<JStatement>();
 	    mustBe(LCURLY);
@@ -773,14 +781,14 @@ private JStatement switchBlockStatementGroup() {
         ArrayList<JExpression>switchLabels =  new ArrayList<JExpression>();
 	ArrayList<JStatement> blockStatements = new ArrayList<JStatement>();
 
-	if (!see(DEFAULT)){//non-default cases
+	if (!see(DEF)){//non-default cases
 	    do {
 		switchLabels.add(switchLabel());
 	    }
 	    while (see(CASE) && !see(RCURLY) && !see(EOF));
 	    //RCURLY: case: and empty statements only
 
-	    while ( !see(CASE) && !see(RCURLY) && !see(DEFAULT)) {
+	    while ( !see(CASE) && !see(RCURLY) && !see(DEF)) {
 		//RCURLY: case: only
 		blockStatements.add(blockStatement());
 	    }
@@ -818,7 +826,7 @@ private JExpression switchLabel(){
 	return new JSwitchLabel(line,expr);	
     }
     else{//must be a default
-	mustBe(DEFAULT);
+	mustBe(DEF);
 	mustBe(COL);
 	return new JSwitchLabelDefault(line);
 	
