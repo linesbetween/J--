@@ -70,8 +70,8 @@ public interface JavaCCParserConstants {
   int ARS = 72;
   int RSHIFT_ASSIGN = 73;
   int LRS = 74;
-  int LLSHIFT_ASSIGN = 75;
-  int GTE = 76;
+  int RRSHIFT_ASSIGN = 75;
+  int GE = 76;
   int ALS = 77;
   int LSHIFT_ASSIGN = 78;
   int LS = 79;

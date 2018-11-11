@@ -1131,9 +1131,9 @@ private JExpression switchLabel(){
 	  else if (have(MODE_ASSIGN)) {
             return new JModeAssignOp(line, lhs, assignmentExpression());
 	  }
-	  else if (have(PLUS_ASSIGN)) {
+	/* else if (have(PLUS_ASSIGN)) {
             return new JRShiftAssignOp(line, lhs, assignmentExpression());
-	  }
+	    }*/
 	  else if (have(RSHIFT_ASSIGN)) {
             return new JRRShiftAssignOp(line, lhs, assignmentExpression());
 	  }

@@ -634,6 +634,7 @@ public class Parser {
      *   statement ::= block
      *               | IF parExpression statement [ELSE statement]
      *               | WHILE parExpression statement 
+     *               | SWITCH parExression {{switchBlockStatementGroup}}
      *               | RETURN [expression] SEMI
      *               | SEMI 
      *               | statementExpression SEMI
@@ -655,7 +656,26 @@ public class Parser {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
-        } else if (have(RETURN)) {
+        }
+	else if (have(DO)){
+	    JStatement statement = statement();
+	    mustBe(WHILE);
+	    JExpression test = parExpression();
+	    mustBe(SEMI);
+	    return new JDoWhileStatement(line, test, statement);
+	    }
+	else if (have(SWITCH)){
+	    JExpression test = parExpression();
+	    ArrayList<JStatement> statements = new ArrayList<JStatement>();
+	    mustBe(LCURLY);
+	    while (!see(RCURLY) && !see(EOF)) {
+		statements.add(switchBlockStatementGroup());
+	    }
+	    mustBe(RCURLY);
+	    return new JSwitchStatement(line, test, statements);
+	   
+        }
+     	else if (have(RETURN)) {
             if (have(SEMI)) {
                 return new JReturnStatement(line, null);
             } else {
@@ -663,11 +683,24 @@ public class Parser {
                 mustBe(SEMI);
                 return new JReturnStatement(line, expr);
             }
-        } else if (have(SEMI)) {
+        }else if (have(BREAK)){
+	    if (have(SEMI)){
+		return new JBreakStatement(line, null);
+	    }
+	    else {
+		mustBe(IDENTIFIER);
+		String id = scanner.previousToken().image();
+		mustBe(SEMI);
+		return new JBreakStatement(line,id);
+		}
+	}
+
+	else if (have(SEMI)) {
             return new JEmptyStatement(line);
         } else { // Must be a statementExpression
             JStatement statement = statementExpression();
             mustBe(SEMI);
+		
             return statement;
         }
     }
@@ -732,6 +765,76 @@ public class Parser {
         return expr;
     }
 
+     /**
+     * Parse a switch block statement group.
+     * 
+     * <pre>
+     *   switchBlockStatementGroup ::= switchLabel LCURLY switchLabel RCURLY 
+     *                               LCURLY blockStatement RCURLY
+     * </pre>
+     * 
+     * @return an AST for a switchblockstatemengroup.
+     */
+
+private JStatement switchBlockStatementGroup() {
+	int line = scanner.token().line();
+        ArrayList<JExpression>switchLabels =  new ArrayList<JExpression>();
+	ArrayList<JStatement> blockStatements = new ArrayList<JStatement>();
+
+	if (!see(DEF)){//non-default cases
+	    do {
+		switchLabels.add(switchLabel());
+	    }
+	    while (see(CASE) && !see(RCURLY) && !see(EOF));
+	    //RCURLY: case: and empty statements only
+
+	    while ( !see(CASE) && !see(RCURLY) && !see(DEF)) {
+		//RCURLY: case: only
+		blockStatements.add(blockStatement());
+	    }
+
+
+	    return new JSwitchBlockStatementGroup(line, switchLabels,blockStatements);
+	}
+
+	else{//default case
+	    switchLabels.add(switchLabel());
+	    while (!see(RCURLY)){
+	       blockStatements.add(blockStatement());
+	    }
+	    return new JSwitchBlockStatementGroup(line, switchLabels,blockStatements);
+	}
+    }
+
+ /**
+     * Parse a switch label.
+     * 
+     * <pre>
+     *   switchLabel ::= CASE  expression COL 
+     *                  |DEFUALT COL
+     *                              
+     * </pre>
+     * 
+     * @return an AST for a switch label.
+     */
+
+private JExpression switchLabel(){
+    int line = scanner.token().line();
+    if(have(CASE)){
+	JExpression expr = expression();
+	mustBe(COL);
+	return new JSwitchLabel(line,expr);	
+    }
+    else{//must be a default
+	mustBe(DEF);
+	mustBe(COL);
+	return new JSwitchLabelDefault(line);
+	
+    }
+}
+
+
+    
     /**
      * Parse a local variable declaration statement.
      * 
@@ -1009,7 +1112,7 @@ public class Parser {
 
     private JExpression assignmentExpression() {
         int line = scanner.token().line();
-        JExpression lhs = conditionalAndExpression();
+        JExpression lhs = conditionalExpression();
 
         if (have(ASSIGN)) {
             return new JAssignOp(line, lhs, assignmentExpression());
@@ -1028,9 +1131,9 @@ public class Parser {
 	  else if (have(MODE_ASSIGN)) {
             return new JModeAssignOp(line, lhs, assignmentExpression());
 	  }
-	  else if (have(PLUS_ASSIGN)) {
+	/* else if (have(PLUS_ASSIGN)) {
             return new JRShiftAssignOp(line, lhs, assignmentExpression());
-	  }
+	    }*/
 	  else if (have(RSHIFT_ASSIGN)) {
             return new JRRShiftAssignOp(line, lhs, assignmentExpression());
 	  }
