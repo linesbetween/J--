@@ -78,9 +78,11 @@ class JSwitchBlockStatementGroup extends JStatement {
 	for (JExpression label : switchLabels){
 	    label.writeToStdOut(p);
 	}
+	p.indentLeft();
 	// switchLabels.writeToStdOut(p);
-        p.indentLeft();
         p.printf("</SwitchLabels>\n");
+        p.indentLeft();
+	
         p.printf("<BlockStatements>\n");
         p.indentRight();
 	for (JStatement state : blockStatements){
@@ -89,6 +91,7 @@ class JSwitchBlockStatementGroup extends JStatement {
 	//blockStatements.wrtieToStdOut(p);
         p.indentLeft();
         p.printf("</BlockStatements>\n");
+	p.indentLeft();
         p.printf("</JSwitchBlockStatementGroup>\n");
     }
 

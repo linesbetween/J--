@@ -828,7 +828,7 @@ private JExpression switchLabel(){
     else{//must be a default
 	mustBe(DEF);
 	mustBe(COL);
-	return new JSwitchLabelDefault(line);
+	return new JSwitchLabel(line,null);
 	
     }
 }

@@ -67,17 +67,20 @@ class JSwitchLabel extends JExpression {
         p.printf("<JSwitchLabels line=\"%d\">\n", line());
         p.indentRight();
         p.printf("<Expression>\n");
+	if (expr != null){
         p.indentRight();
 	expr.writeToStdOut(p);
         p.indentLeft();
+	}
         p.printf("</Expression>\n");
+	p.indentLeft();
         p.printf("</JSwitchLabels>\n");
     }
 
 }
 
 
-
+//not necessary
 class JSwitchLabelDefault extends JExpression {
 
    
@@ -137,4 +140,5 @@ class JSwitchLabelDefault extends JExpression {
     }
 
 }
+
 
