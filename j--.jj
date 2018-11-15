@@ -738,6 +738,12 @@ private JStatement statement(): {
         body = statement()
         { statement = new JWhileStatement( line, test, body ); } |
 
+	<DO> {line = token.beginLine;}
+	body = statement()
+	<WHILE>
+	test = parExpression()
+	{statement = new JDoWhileStatement (line, test, statement);}	|
+
 	<SWITCH> { line = token.beginLine;}
 	test = parExpression()
 	<LCURLY> (
@@ -752,6 +758,12 @@ private JStatement statement(): {
         ]
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
+
+	//( [forInit] ; [expression] ; [forUpdate] ) statement
+	<FOR>
+	<LPAREN>
+	<RPAREN>
+	aStatement = statement() |
 
 
 	<BREAK> { line = token.beginLine; }
