@@ -742,7 +742,7 @@ private JStatement statement(): {
 	body = statement()
 	<WHILE>
 	test = parExpression()
-	{statement = new JDoWhileStatement (line, test, statement);}	|
+	{statement = new JDoWhileStatement (line, test, body);}	|
 
 	<SWITCH> { line = token.beginLine;}
 	test = parExpression()
@@ -760,10 +760,10 @@ private JStatement statement(): {
         { statement = new JReturnStatement( line, expr ); } |
 
 	//( [forInit] ; [expression] ; [forUpdate] ) statement
-	<FOR>
-	<LPAREN>
-	<RPAREN>
-	aStatement = statement() |
+	//<FOR>
+	//<LPAREN>
+	//<RPAREN>
+	//aStatement = statement() |
 
 
 	<BREAK> { line = token.beginLine; }
