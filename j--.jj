@@ -715,6 +715,7 @@ private JStatement statement(): {
     JForInit forInitStatement = null;
     JExpression forExpression = null;
     ArrayList<JStatementExpression> forUpdateStatement = new ArrayList<JStatementExpression>();
+    JStatement astatement = null;
    // <IDENTIFIER> id = null; 
 }
 {       
@@ -740,21 +741,21 @@ private JStatement statement(): {
 	<FOR> {line = token.beginLine;}
 		<LPAREN>
 		
-		forInitStatement = forInit() |
+		forInitStatement = forInit() //|
 		
-		<SEMI>
+	//	<SEMI>
 		
-		forExpression =  expression()|
+	//	forExpression =  expression()|
 		
-		<SEMI>
+	//	<SEMI>
 		
-		forUpdateStatement = forUpdate()
+	//	forUpdateStatement = forUpdate()
 		
 		<RPAREN>
 		astatement = statement()
 
 	{ statement = new JForStatement(line, forInitStatement, forExpression,
-	  	      	  		      forUpdateStatement);}|
+	  	      	  		      forUpdateStatement, astatement);}|
 
 	    
         <WHILE> { line = token.beginLine; }
@@ -901,22 +902,22 @@ private JExpression parExpression(): {
 private JForInit forInit(): {
 	int line = 0;
 	JStatementExpression astateexpr = null;
-	ArrayList<JStatementExpression> stateexprs =
-	new ArrayList<JStatementExpression>();
+	//ArrayList<JStatementExpression> stateexprs =
+	//	new ArrayList<JStatementExpression>();
 	JVariableDeclaration decl = null;
-	ArrayList<Statement> statements =
+	ArrayList<JStatement> statements =
 	new ArrayList<JStatement>();
 }
 {try
 	{
 	{line = token.beginLine;}
-	astateexpr = statementExpression()
-	{stateexprs.add(astateexpr);}
-	(
-		astateexpr = statementExpression()
-		{stateexprs.add(astateexpr);}
-	)*
-	{statements = stateexprs;}
+//	astateexpr = statementExpression()
+//	{statements.add(astateexpr);}
+//	(
+//		astateexpr = statementExpression()
+//		{statements.add(astateexpr);}
+//	)*
+	//{statements = stateexprs;}
 	|
 	
 	{decl = localVariableDeclarationStatement();
@@ -924,7 +925,7 @@ private JForInit forInit(): {
 	 }
 	}
 catch (ParseException e){
-      recoverFromError(new int[] {SEMI, EOF}, e);
+      recoverFromError( new int[] { SEMI, EOF }, e );
 }
 {return new JForInit(line,statements);}
 }
@@ -940,15 +941,15 @@ private ArrayList<JStatementExpression> forUpdate():{
 {
 try{
 	{line = token.beginLine;}
-		astateexpr = statementExpression()
-	{stateexprs.add(stateexpr);}
-	(
-		astateexpr = statementExpression()
-		{stateexprs.add(stateexpr);}
-	)*
+//		astateexpr = statementExpression()
+//	{stateexprs.add(astateexpr);}
+//	(
+//		astateexpr = statementExpression()
+//		{stateexprs.add(astateexpr);}
+//	)*
 }
 catch (ParseException e){
-      recoverFromError(new int[] {SEMI, EOF}, e);
+       recoverFromError( new int[] { SEMI, EOF }, e );
 }
 {return stateexprs; }
 }

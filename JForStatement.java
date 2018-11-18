@@ -15,6 +15,7 @@ class JForStatement extends JStatement {
     private JForInit forInitStatement;
     private JExpression forExpression;
     private ArrayList<JStatementExpression> forUpdateStatement;
+    private JStatement statement;
     
 
     /**
@@ -30,11 +31,13 @@ class JForStatement extends JStatement {
 
     public JForStatement(int line, JForInit  forInitStatement,
 			 JExpression forExpression,
-			 ArrayList<JStatementExpression> forUpdateStatement) {
+			 ArrayList<JStatementExpression> forUpdateStatement,
+			 JStatement statement) {
         super(line);
         this.forInitStatement = forInitStatement;
 	this.forExpression = forExpression;
 	this.forUpdateStatement = forUpdateStatement;
+	this.statement = statement;
     }
 
     /**
@@ -83,19 +86,17 @@ class JForStatement extends JStatement {
         p.indentRight();
         if (forInitStatement != null) {
             p.println("<forInitStatement>");
-            p.indentLeft();
             p.println("</forInitStatement>");
         }
+	
 	 if (forExpression != null) {
             p.println("<forExpression>");
-            p.indentLeft();
             p.println("</forExpression>");
         }
 	  if (forUpdateStatement != null) {
             p.println("<forUpdateStatement>");
-            p.indentLeft();
             p.println("</forUpdateStatement>");
-        }
+	  }
         p.indentLeft();
         p.println("</JForStatement>");
     }
