@@ -907,6 +907,12 @@ private JForInit forInit(): {
 	JVariableDeclaration decl = null;
 	ArrayList<JStatement> statements =
 	new ArrayList<JStatement>();
+
+	Type type = null;
+	ArrayList <JVariableDeclarator> vdecls = null;
+   	ArrayList <String> mods = new ArrayList<String>();
+	JStatement singleStatement = null;
+	
 }
 {try
 	{
@@ -917,8 +923,12 @@ private JForInit forInit(): {
 		astateexpr = statementExpression()
 		{statements.add(astateexpr);}
 	)*
-	//{statements = stateexprs;}
-//	|
+	//{statements = stateexprs;}//not necessary
+	|
+	type = type() { line = token.beginLine; }
+        vdecls = variableDeclarators( type )
+	{singleStatement = new JVariableDeclaration( line, mods, vdecls );}
+	{statements.add(singleStatement);}
 	
 //	{decl = localVariableDeclarationStatement();
 //	 statements.add(decl);
@@ -1347,6 +1357,8 @@ private JStatement statementExpression(): {
             line = expr.line();
             if ( expr instanceof JAssignment
               || expr instanceof JPreIncrementOp
+	      || expr instanceof JPreDecrementOp
+	      || expr instanceof JPostIncrementOp
               || expr instanceof JPostDecrementOp
               || expr instanceof JMessageExpression
               || expr instanceof JSuperConstruction
