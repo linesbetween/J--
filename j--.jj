@@ -714,7 +714,7 @@ private JStatement statement(): {
     ArrayList<JStatement> statements = new ArrayList<JStatement>();
     JForInit forInitStatement = null;
     JExpression forExpression = null;
-    ArrayList<JStatementExpression> forUpdateStatement = new ArrayList<JStatementExpression>();
+    ArrayList<JStatement> forUpdateStatement = new ArrayList<JStatement>();
     JStatement astatement = null;
    // <IDENTIFIER> id = null; 
 }
@@ -741,15 +741,15 @@ private JStatement statement(): {
 	<FOR> {line = token.beginLine;}
 		<LPAREN>
 		
-		forInitStatement = forInit() //|
+		forInitStatement = forInit() |
 		
-	//	<SEMI>
+		//<SEMI>
 		
-	//	forExpression =  expression()|
+		forExpression =  expression()|
 		
-	//	<SEMI>
+		//<SEMI>
 		
-	//	forUpdateStatement = forUpdate()
+		forUpdateStatement = forUpdate()
 		
 		<RPAREN>
 		astatement = statement()
@@ -901,9 +901,9 @@ private JExpression parExpression(): {
 // 	  | localVariableDeclarationStatement
 private JForInit forInit(): {
 	int line = 0;
-	JStatementExpression astateexpr = null;
-	//ArrayList<JStatementExpression> stateexprs =
-	//	new ArrayList<JStatementExpression>();
+	JStatement astateexpr = null;
+	//ArrayList<JStatement> stateexprs =
+	//	new ArrayList<JStatement>();
 	JVariableDeclaration decl = null;
 	ArrayList<JStatement> statements =
 	new ArrayList<JStatement>();
@@ -911,12 +911,12 @@ private JForInit forInit(): {
 {try
 	{
 	{line = token.beginLine;}
-//	astateexpr = statementExpression()
-//	{statements.add(astateexpr);}
-//	(
-//		astateexpr = statementExpression()
-//		{statements.add(astateexpr);}
-//	)*
+	astateexpr = statementExpression()
+	{statements.add(astateexpr);}
+	(
+		astateexpr = statementExpression()
+		{statements.add(astateexpr);}
+	)*
 	//{statements = stateexprs;}
 	|
 	
@@ -932,21 +932,21 @@ catch (ParseException e){
 
 
 //forUpdate ::= statementExpression {, statementExpression }
-private ArrayList<JStatementExpression> forUpdate():{
+private ArrayList<JStatement> forUpdate():{
 	int line = 0;
-	JStatementExpression astateexpr = null;
-	ArrayList<JStatementExpression> stateexprs =
-	new ArrayList<JStatementExpression>();
+	JStatement  astateexpr = null;
+	ArrayList<JStatement> stateexprs =
+	new ArrayList<JStatement>();
 }
 {
 try{
 	{line = token.beginLine;}
-//		astateexpr = statementExpression()
-//	{stateexprs.add(astateexpr);}
-//	(
-//		astateexpr = statementExpression()
-//		{stateexprs.add(astateexpr);}
-//	)*
+		astateexpr = statementExpression()
+	{stateexprs.add(astateexpr);}
+	(
+		astateexpr = statementExpression()
+		{stateexprs.add(astateexpr);}
+	)*
 }
 catch (ParseException e){
        recoverFromError( new int[] { SEMI, EOF }, e );

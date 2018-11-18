@@ -14,7 +14,7 @@ class JForStatement extends JStatement {
     /** List of JStatement . */
     private JForInit forInitStatement;
     private JExpression forExpression;
-    private ArrayList<JStatementExpression> forUpdateStatement;
+    private ArrayList<JStatement> forUpdateStatement;
     private JStatement statement;
     
 
@@ -31,7 +31,7 @@ class JForStatement extends JStatement {
 
     public JForStatement(int line, JForInit  forInitStatement,
 			 JExpression forExpression,
-			 ArrayList<JStatementExpression> forUpdateStatement,
+			 ArrayList<JStatement> forUpdateStatement,
 			 JStatement statement) {
         super(line);
         this.forInitStatement = forInitStatement;
