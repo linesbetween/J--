@@ -712,12 +712,15 @@ private JStatement statement(): {
     JStatement body = null;
     JExpression expr = null;
     ArrayList<JStatement> statements = new ArrayList<JStatement>();
+    JForInit forInitStatement = null;
+    JExpression forExpression = null;
+    ArrayList<JStatementExpression> forUpdateStatement = new ArrayList<JStatementExpression>();
    // <IDENTIFIER> id = null; 
 }
 {       
     try {
         statement = block() |
-	
+	//if parExpression statement [else statement]
         <IF> { line = token.beginLine; }
         test = parExpression() 
         consequent = statement() 
@@ -732,6 +735,27 @@ private JStatement statement(): {
         ]
         { statement = 
             new JIfStatement( line, test, consequent, alternate ); } |
+
+	//( [forInit] ; [expression] ; [forUpdate] ) statement
+	<FOR> {line = token.beginLine;}
+		<LPAREN>
+		
+		forInitStatement = forInit() |
+		
+		<SEMI>
+		
+		forExpression =  expression()|
+		
+		<SEMI>
+		
+		forUpdateStatement = forUpdate()
+		
+		<RPAREN>
+		astatement = statement()
+
+	{ statement = new JForStatement(line, forInitStatement, forExpression,
+	  	      	  		      forUpdateStatement);}|
+
 	    
         <WHILE> { line = token.beginLine; }
         test = parExpression() 
@@ -759,11 +783,6 @@ private JStatement statement(): {
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
 
-	//( [forInit] ; [expression] ; [forUpdate] ) statement
-	//<FOR>
-	//<LPAREN>
-	//<RPAREN>
-	//aStatement = statement() |
 
 
 	<BREAK> { line = token.beginLine; }
@@ -799,6 +818,7 @@ private JStatement statement(): {
  * </pre>
  * 
  * @return a list of formal parameters.
+ * formalParameters ::= ( [formalParameter {, formalParameter}] )
  */
 
 private ArrayList<JFormalParameter> formalParameters(): {
@@ -833,6 +853,7 @@ private ArrayList<JFormalParameter> formalParameters(): {
  * </pre>
  * 
  * @return an AST for a formalParameter.
+ * formalParameter ::= [final] type <identifier> { [ ] }
  */
 
 private JFormalParameter formalParameter(): {
@@ -872,6 +893,64 @@ private JExpression parExpression(): {
         recoverFromError( new int[] { SEMI, EOF }, e ); 
     }   
     { return expr; }
+}
+
+//forInit ::= statementExpression {, statementExpression}
+//	  | [final] type variableDeclarators
+// 	  | localVariableDeclarationStatement
+private JForInit forInit(): {
+	int line = 0;
+	JStatementExpression astateexpr = null;
+	ArrayList<JStatementExpression> stateexprs =
+	new ArrayList<JStatementExpression>();
+	JVariableDeclaration decl = null;
+	ArrayList<Statement> statements =
+	new ArrayList<JStatement>();
+}
+{try
+	{
+	{line = token.beginLine;}
+	astateexpr = statementExpression()
+	{stateexprs.add(astateexpr);}
+	(
+		astateexpr = statementExpression()
+		{stateexprs.add(astateexpr);}
+	)*
+	{statements = stateexprs;}
+	|
+	
+	{decl = localVariableDeclarationStatement();
+	 statements.add(decl);
+	 }
+	}
+catch (ParseException e){
+      recoverFromError(new int[] {SEMI, EOF}, e);
+}
+{return new JForInit(line,statements);}
+}
+
+
+//forUpdate ::= statementExpression {, statementExpression }
+private ArrayList<JStatementExpression> forUpdate():{
+	int line = 0;
+	JStatementExpression astateexpr = null;
+	ArrayList<JStatementExpression> stateexprs =
+	new ArrayList<JStatementExpression>();
+}
+{
+try{
+	{line = token.beginLine;}
+		astateexpr = statementExpression()
+	{stateexprs.add(stateexpr);}
+	(
+		astateexpr = statementExpression()
+		{stateexprs.add(stateexpr);}
+	)*
+}
+catch (ParseException e){
+      recoverFromError(new int[] {SEMI, EOF}, e);
+}
+{return stateexprs; }
 }
 
     /* Parse a switch block statement group.
