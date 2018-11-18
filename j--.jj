@@ -741,15 +741,15 @@ private JStatement statement(): {
 	<FOR> {line = token.beginLine;}
 		<LPAREN>
 		
-		forInitStatement = forInit() |
+		[forInitStatement = forInit()] // |
 		
-		//<SEMI>
+		<SEMI>
 		
-		forExpression =  expression()|
+		[forExpression =  expression()] //|
 		
-		//<SEMI>
+		<SEMI>
 		
-		forUpdateStatement = forUpdate()
+		[forUpdateStatement = forUpdate()]
 		
 		<RPAREN>
 		astatement = statement()
@@ -913,16 +913,16 @@ private JForInit forInit(): {
 	{line = token.beginLine;}
 	astateexpr = statementExpression()
 	{statements.add(astateexpr);}
-	(
+	(<COMMA>
 		astateexpr = statementExpression()
 		{statements.add(astateexpr);}
 	)*
 	//{statements = stateexprs;}
-	|
+//	|
 	
-	{decl = localVariableDeclarationStatement();
-	 statements.add(decl);
-	 }
+//	{decl = localVariableDeclarationStatement();
+//	 statements.add(decl);
+//	 }
 	}
 catch (ParseException e){
       recoverFromError( new int[] { SEMI, EOF }, e );
@@ -943,7 +943,7 @@ try{
 	{line = token.beginLine;}
 		astateexpr = statementExpression()
 	{stateexprs.add(astateexpr);}
-	(
+	(<COMMA>
 		astateexpr = statementExpression()
 		{stateexprs.add(astateexpr);}
 	)*
