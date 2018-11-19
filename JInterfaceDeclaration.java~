@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import static jminusminus.CLConstants.*;
 
 /**
- * A class declaration has a list of modifiers, a name, a super class and a
+ * A interface  declaration has a list of modifiers, a name, a super class and a
  * class block; it distinguishes between instance fields and static (class)
  * fields for initialization, and it defines a type. It also introduces its own
  * (class) context.
@@ -43,9 +43,6 @@ class JClassDeclaration extends JAST implements JTypeDecl {
     /** Static (class) fields of this class. */
     private ArrayList<JFieldDeclaration> staticFieldInitializations;
 
-    /**qualified identifier list*/
-    private ArrayList<Type> classList;
-
     /**
      * Constructs an AST node for a class declaration given the line number, list
      * of class modifiers, name of the class, its super class type, and the
@@ -64,13 +61,11 @@ class JClassDeclaration extends JAST implements JTypeDecl {
      */
 
     public JClassDeclaration(int line, ArrayList<String> mods, String name,
-			     Type superType, ArrayList<Type> classList,
-			     ArrayList<JMember> classBlock) {
+            Type superType, ArrayList<JMember> classBlock) {
         super(line);
         this.mods = mods;
         this.name = name;
         this.superType = superType;
-	this.classList = classList;
         this.classBlock = classBlock;
         hasExplicitConstructor = false;
         instanceFieldInitializations = new ArrayList<JFieldDeclaration>();

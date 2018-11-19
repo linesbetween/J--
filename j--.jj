@@ -182,6 +182,7 @@ TOKEN:
 | < PUBLIC: "public" >
 | < RETURN: "return" >
 | < STATIC: "static" >
+| < STRICTFP: "strictfp">
 | < SUPER: "super" >
 | < SWITCH: "switch">
 | < THIS: "this" >
@@ -380,7 +381,8 @@ private TypeName qualifiedIdentifier(): {
  * Parse a type declaration.
  * 
  * <pre>
- *   typeDeclaration ::= modifiers classDeclaration
+ *   typeDeclaration ::= typeDeclarationModifiers (classDeclaration | interfaceDeclaration)
+     		     	 | ;
  * </pre>
  * 
  * @return an AST for a typeDeclaration.
@@ -389,11 +391,20 @@ private TypeName qualifiedIdentifier(): {
 private JAST typeDeclaration(): {
     ArrayList<String> mods = null;
     JAST classDeclaration = null;
+    JAST interfaceDeclaration = null;
 }
 {
     try {
         mods = modifiers()
-        classDeclaration = classDeclaration( mods )
+	//<LPAREN>
+	(
+        classDeclaration = classDeclaration( mods ) |
+	classDeclaration = interfaceDeclaration(mods)
+	)
+	//<RPAREN>
+	
+	|
+	<SEMI>
     } 
     catch ( ParseException e ) { 
         recoverFromError( new int[] { SEMI, EOF }, e ); 
@@ -401,11 +412,13 @@ private JAST typeDeclaration(): {
     { return classDeclaration; }
 }
 
+
+
 /**
  * Parse modifiers.
  * 
  * <pre>
- *   modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT}
+ *   modifiers ::= {PUBLIC | PROTECTED | PRIVATE | STATIC | ABSTRACT | final | strictfp }
  * </pre>
  * 
  * Check for duplicates, and conflicts among access modifiers (public,
@@ -421,6 +434,9 @@ private ArrayList<String> modifiers(): {
     boolean scannedPRIVATE = false;
     boolean scannedSTATIC = false;
     boolean scannedABSTRACT = false;
+    boolean scannedFINAL = false;
+    boolean scannedSTRICTFP = false;
+    
 }
 {
     try {
@@ -473,7 +489,24 @@ private ArrayList<String> modifiers(): {
                 reportParserError( "Repeated modifier: abstract" );
             }
             scannedABSTRACT = true;
+        } |
+	 <FINAL> 
+        { 
+            mods.add( "abstract" );
+            if ( scannedABSTRACT ) {
+                reportParserError( "Repeated modifier: abstract" );
+            }
+            scannedFINAL = true;
+        }
+	 <STRICTFP> 
+        { 
+            mods.add( "abstract" );
+            if ( scannedABSTRACT ) {
+                reportParserError( "Repeated modifier: abstract" );
+            }
+            scannedSTRICTFP = true;
         } 
+	
     )*                  
     } 
     catch ( ParseException e ) { 
@@ -489,6 +522,9 @@ private ArrayList<String> modifiers(): {
  *   classDeclaration ::= CLASS IDENTIFIER 
  *                        [EXTENDS qualifiedIdentifier] 
  *                        classBody
+ * classDeclaration ::= class <identifier> [extends qualifiedIdentifier]
+ *		   [implements qualifiedIdentifier {, qualifiedIdentifier}]
+ *		   classBody
  * </pre>
  * 
  * A class which doesn't explicitly extend another (super) class 
@@ -502,6 +538,8 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     int line = 0;
     String name = "";
     Type superClass = Type.OBJECT;
+    Type obj = Type.OBJECT;
+    ArrayList<Type> classList = new ArrayList<Type>();
     ArrayList<JMember> classBody = null;
 }
 {
@@ -511,6 +549,15 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
         [ 
             <EXTENDS> superClass = qualifiedIdentifier() 
         ]
+	[
+	    <IMPLEMENTS> superClass = qualifiedIdentifier()
+	    (
+		<COMMA>
+		 obj = qualifiedIdentifier()
+	    	 {classList.add(obj);}
+	    )*
+	    
+	]
         classBody = classBody()           
     } 
     catch ( ParseException e ) { 
@@ -518,7 +565,56 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
     }
     { 
         return new JClassDeclaration( line, mods, 
-            name, superClass, classBody ); 
+            name, superClass, classList, classBody ); 
+    }
+}
+
+/**
+ * Parse a interface declaration.
+ * classDeclaration ::= class <identifier> [extends qualifiedIdentifier]
+ *		   [implements qualifiedIdentifier {, qualifiedIdentifier}]
+ *		   classBody
+ * 
+ * <pre>
+ * interfaceDeclaration ::= interface <identifier> // can’t be final
+ * 			[extends qualifiedIdentifier {, qualifiedIdentifier}]
+ *  			interfaceBody
+ * </pre>
+ * 
+ * A interface  which doesn't explicitly extend another (super) class 
+ * implicitly extends the superclass java.lang.Object.
+ * 
+ * @param mods the class modifiers.
+ * @return an AST for a classDeclaration.
+ */
+     
+private JInterfaceDeclaration interfaceDeclaration( ArrayList<String> mods ): {
+    int line = 0;
+    String name = "";
+    Type superClass = Type.OBJECT;
+    ArrayList<Type> types = new ArrayList<Type>();
+    ArrayList<JMember> interfaceBody = null;
+}
+{
+    try {
+        <INTERFACE> { line = token.beginLine; }
+        <IDENTIFIER> { name = token.image; }
+        [ 
+            <EXTENDS> superClass = qualifiedIdentifier()
+	    {types.add (superClass);}
+	    (<COMMA>
+		 superClass = qualifiedIdentifier()
+	   	  {types.add (superClass);}
+	    )*
+        ]
+        interfaceBody = interfaceBody()           
+    } 
+    catch ( ParseException e ) { 
+        recoverFromError( new int[] { SEMI, EOF }, e ); 
+    }
+    { 
+        return new JInterfaceDeclaration( line, mods, 
+            name, superClass, interfaceBody ); 
     }
 }
 
@@ -529,6 +625,12 @@ private JClassDeclaration classDeclaration( ArrayList<String> mods ): {
  *   classBody ::= LCURLY
  *                   {modifiers memberDecl}
  *                 RCURLY
+ *   classBody ::= { { ;
+     	       | static block
+	       | block
+	       | modifiers memberDecl
+	       }
+	       }
  * </pre>
  * 
  * @return list of members in the class body.
@@ -538,11 +640,15 @@ private ArrayList<JMember> classBody(): {
     ArrayList<String> mods = null;
     JMember aMember = null;
     ArrayList<JMember> members = new ArrayList<JMember>();
+    JBlock block = null;
 }
 {
     try {
         <LCURLY>
-        ( 
+        (
+	  //  <SEMI> |
+	   // <STATIC> block = block() |
+	   // block = block()|
             mods = modifiers()
             aMember = memberDecl( mods ) { members.add( aMember ); } 
         )*
@@ -553,6 +659,49 @@ private ArrayList<JMember> classBody(): {
     }
     { return members; }
 }
+
+
+/**
+ * Parse a interface body.
+ * 
+ * <pre>
+ *  classBody ::= { { ;
+    	      | static block
+	      | block
+ 	      | modifiers memberDecl
+ 	      }
+	      }
+interfaceBody ::= { { ;
+	      | modifiers interfaceMemberDecl
+	      }
+	      }
+ * </pre>
+ * 
+ * @return list of members in the class body.
+ */
+
+private ArrayList<JMember> interfaceBody(): {
+    ArrayList<String> mods = null;
+    JMember aMember = null;
+    ArrayList<JMember> members = new ArrayList<JMember>();
+}
+{
+    try {
+        <LCURLY>
+        (  <SEMI>
+	   |
+            mods = modifiers()
+            aMember = interfaceMemberDecl( mods )
+	    { members.add( aMember ); } 
+        )*
+        <RCURLY>
+    } 
+    catch ( ParseException e ) { 
+        recoverFromError( new int[] { SEMI, EOF }, e ); 
+    }
+    { return members; }
+}
+
 
 /**
  * Parse a member declaration.
@@ -605,17 +754,96 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             ) 
             { line = token.beginLine; }
             <IDENTIFIER> { name = token.image; } 
-            params = formalParameters() 
+            params = formalParameters()
+	    (<LBRACK> <RBRACK>)*
+	    [<THROWS>]//TODO
             ( 
                 body = block() | 
                 <SEMI> 
             )
+	    
             { 
                 memberDecl = 
                    new JMethodDeclaration( line, mods, name, 
                                            type, params, body ); 
             } 
         ) | 
+        ( 
+            type = type() { line = token.beginLine; }
+            variableDeclarators = variableDeclarators( type )
+            <SEMI>
+            { 
+                memberDecl = new JFieldDeclaration( line, mods, 
+                    variableDeclarators ); 
+            }
+        )
+    } 
+    catch ( ParseException e ) { 
+        recoverFromError( new int[] { SEMI, EOF }, e ); 
+    }
+    { return memberDecl; }
+}
+
+
+
+
+/**
+ * Parse a interface member declaration.
+ * 
+ * <pre>
+ * 
+ * memb erDecl ::= classDeclaration // inner class
+   	       	   | interfaceDeclaration // inner interface
+		   | <identifier> // constructor
+		   formalParameters
+		   [throws qualifiedIdentifier {, qualifiedIdentifier }] block
+		   | (void | type) <identiier> // method
+		   formalParameters { [ ] }
+		   [throws qualifiedIdentifier {, qualifiedIdentifier}] (block | ; )
+		   | type variableDeclarators ; // field
+interfaceMemberDecl ::= classDeclaration // inner class
+		    | interfaceDeclaration // inner interface
+		    | (void | type) <identifier> // method
+		    formalParameters { [ ] }
+		    [throws qualifiedIdentifier {, qualifiedIdentifier}] ;
+		    | type variableDeclarators ; // fields; must have inits
+ * </pre>
+ * 
+ * @param mods the class member modifiers.
+ * @return an AST for a memberDecl.
+ */
+    
+private JMember interfaceMemberDecl( ArrayList<String>  mods ): {
+    int line = 0;
+    Type type = null;
+    String name = "";
+    ArrayList<JFormalParameter> params = null;
+    JBlock body = null;
+    ArrayList<JVariableDeclarator> variableDeclarators = null;
+    JMember memberDecl = null;
+}
+{
+    try {
+      
+        LOOKAHEAD( ( <VOID> | type() ) <IDENTIFIER> <LPAREN> )
+        (
+            ( 
+                <VOID> { type = Type.VOID; } | 
+                type = type() 
+            ) 
+            { line = token.beginLine; }
+            <IDENTIFIER> { name = token.image; } 
+            params = formalParameters()
+	    (<LBRACK> <RBRACK>)*
+	    [<THROWS>]//TODO
+	    <SEMI>
+            { 
+                memberDecl = 
+                   new JMethodDeclaration( line, mods, name, 
+                                           type, params, null ); 
+            } 
+        )
+	| 
         ( 
             type = type() { line = token.beginLine; }
             variableDeclarators = variableDeclarators( type )

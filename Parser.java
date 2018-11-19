@@ -496,12 +496,20 @@ public class Parser {
         mustBe(IDENTIFIER);
         String name = scanner.previousToken().image();
         Type superClass;
+	ArrayList<Type> classList = new ArrayList<Type>();
         if (have(EXTENDS)) {
             superClass = qualifiedIdentifier();
-            } else {
+            }
+	else if(have(IMPLEMENTS)){
+	     superClass = qualifiedIdentifier();
+	     while (have(COMMA)){
+		 classList.add(qualifiedIdentifier()); 
+	     }
+	}
+	else {
             superClass = Type.OBJECT;
         }
-        return new JClassDeclaration(line, mods, name, superClass, classBody());
+        return new JClassDeclaration(line, mods, name, superClass,classList, classBody());
     }
 
     /**
