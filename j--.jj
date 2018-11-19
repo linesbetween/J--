@@ -186,7 +186,7 @@ TOKEN:
 | < SUPER: "super" >
 | < SWITCH: "switch">
 | < THIS: "this" >
-| < TRHOW: "throw">
+| < THROW: "throw">
 | < THROWS: "throws">
 | < TRUE: "true" >
 | < TRY: "try">
@@ -728,6 +728,8 @@ private JMember memberDecl( ArrayList<String>  mods ): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+    TypeName qI = null;
+    ArrayList<TypeName> qIList = new ArrayList<TypeName>();
 }
 {
     try {
@@ -756,7 +758,16 @@ private JMember memberDecl( ArrayList<String>  mods ): {
             <IDENTIFIER> { name = token.image; } 
             params = formalParameters()
 	    (<LBRACK> <RBRACK>)*
-	    [<THROWS>]//TODO
+	     [<THROWS> qI = qualifiedIdentifier()
+	    	     {qIList.add(qI);}
+	        (
+		 <COMMA>
+		  qI = qualifiedIdentifier()
+	    	    { qIList.add(qI);}
+		 
+		)*
+	    ]
+	 
             ( 
                 body = block() | 
                 <SEMI> 
@@ -821,6 +832,8 @@ private JMember interfaceMemberDecl( ArrayList<String>  mods ): {
     JBlock body = null;
     ArrayList<JVariableDeclarator> variableDeclarators = null;
     JMember memberDecl = null;
+    TypeName qI = null;
+    ArrayList<TypeName> qIList = new ArrayList<TypeName>();
 }
 {
     try {
@@ -835,7 +848,17 @@ private JMember interfaceMemberDecl( ArrayList<String>  mods ): {
             <IDENTIFIER> { name = token.image; } 
             params = formalParameters()
 	    (<LBRACK> <RBRACK>)*
-	    [<THROWS>]//TODO
+	    //[throws qualifiedIdentifier {, qualifiedIdentifier}] (block | ; )
+	    [<THROWS> qI = qualifiedIdentifier()
+	    	    { qIList.add(qI);}
+	        (
+		 <COMMA>
+		  qI = qualifiedIdentifier()
+	    	    { qIList.add(qI);}
+		 
+		)*
+	    ]
+	   // (body = block() | <SEMI>)
 	    <SEMI>
             { 
                 memberDecl = 
@@ -944,6 +967,10 @@ private JStatement statement(): {
     JExpression forExpression = null;
     ArrayList<JStatement> forUpdateStatement = new ArrayList<JStatement>();
     JStatement astatement = null;
+    JBlock block = null;
+    JBlock catchBlock = null;
+    JBlock finalBlock = null;
+    JFormalParameter fp = null;
    // <IDENTIFIER> id = null; 
 }
 {       
@@ -997,6 +1024,20 @@ private JStatement statement(): {
 	test = parExpression()
 	{statement = new JDoWhileStatement (line, test, body);}	|
 
+	//try block
+	      //{catch ( formalParameter ) block}
+	      //[finally block] // must be present if no catches
+	<TRY> block = block()
+	      (
+		<CATCH>
+		<LPAREN> fp = formalParameter() <RPAREN>
+		catchBlock = block()
+	      )*
+	      [
+		<FINALLY> finalBlock = block()
+	      ]
+	{statement =  new JTryStatement (line, block, fp,catchBlock, finalBlock);}|
+
 	<SWITCH> { line = token.beginLine;}
 	test = parExpression()
 	<LCURLY> (
@@ -1012,7 +1053,11 @@ private JStatement statement(): {
         <SEMI>
         { statement = new JReturnStatement( line, expr ); } |
 
-
+	//throw expression ;
+	<THROW>
+	    expr = expression()
+	   <SEMI>
+	   { statement = new JThrowStatement(line, expr);} |
 
 	<BREAK> { line = token.beginLine; }
 	[

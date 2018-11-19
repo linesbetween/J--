@@ -41,7 +41,7 @@ public interface JavaCCParserConstants {
   int SUPER = 43;
   int SWITCH = 44;
   int THIS = 45;
-  int TRHOW = 46;
+  int THROW = 46;
   int THROWS = 47;
   int TRUE = 48;
   int TRY = 49;
