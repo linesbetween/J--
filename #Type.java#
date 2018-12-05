@@ -432,9 +432,7 @@ class Type {
                 : cls.isArray() ? "[" + descriptorFor(cls.getComponentType())
                         : cls.isPrimitive() ? (cls == int.class ? "I"
                                 : cls == char.class ? "C"
-				: cls == double.class ? "D"
-				: cls == long.class ? "J"
-                                : cls == boolean.class ? "Z" : "?")
+                                        : cls == boolean.class ? "Z" : "?")
                                 : "L" + cls.getName().replace('.', '/') + ";";
     }
 
@@ -821,7 +819,7 @@ class TypeName extends Type {
     }
 
     /**
-     * Returns the simple name for this type. For example, String for 
+     * Returns the simple name for this type For example, String for 
      * java.lang.String.
      * 
      * @return the simple name.

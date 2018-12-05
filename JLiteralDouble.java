@@ -15,7 +15,7 @@ class JLiteralDouble extends JExpression {
     }
 
     /**
-     * Analyzing an int literal is trivial.
+     * Analyzing an double literal is trivial.
      * 
      * @param context
      *            context in which names are resolved (ignored here).
@@ -23,7 +23,7 @@ class JLiteralDouble extends JExpression {
      */
 
     public JExpression analyze(Context context) {
-        type = Type.INT;
+        type = Type.DOUBLE;
         return this;
     }
 

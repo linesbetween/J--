@@ -142,7 +142,9 @@ class JDoWhileStatement extends JStatement {
      */
 
     public JDoWhileStatement analyze(Context context) {
-      
+        body = (JStatement) body.analyze(context);
+        condition = condition.analyze(context);
+        condition.type().mustMatchExpected(line(), Type.BOOLEAN);
         return this;
     }
 
@@ -155,7 +157,27 @@ class JDoWhileStatement extends JStatement {
      */
 
     public void codegen(CLEmitter output) {
-      
+	
+       // Need two labels
+        String test = output.createLabel();
+        String out = output.createLabel();
+
+	//label for jump back
+        output.addLabel(test);
+
+        // Codegen body
+        body.codegen(output);
+
+	// Branch out of the loop on the test condition
+        // being false
+        condition.codegen(output, out, false);
+	
+	// Unconditional jump back up to test
+        output.addBranchInstruction(GOTO, test);
+            
+
+        // The label below and outside the loop
+        output.addLabel(out);
     }
 
     /**
