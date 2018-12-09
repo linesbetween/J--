@@ -110,7 +110,12 @@ class JPlusOp extends JBinaryExpression {
                     .analyze(context);
         } else if (lhs.type() == Type.INT && rhs.type() == Type.INT) {
             type = Type.INT;
-        } else {
+        } else if (lhs.type() == Type.LONG && rhs.type() == Type.LONG) {
+            type = Type.LONG;
+        } else if (lhs.type() == Type.DOUBLE && rhs.type() == Type.DOUBLE) {
+            type = Type.DOUBLE;
+        }
+	else {
             type = Type.ANY;
             JAST.compilationUnit.reportSemanticError(line(),
                     "Invalid operand types for +");
@@ -130,10 +135,19 @@ class JPlusOp extends JBinaryExpression {
      */
 
     public void codegen(CLEmitter output) {
-        if (type == Type.INT) {
-            lhs.codegen(output);
+	 lhs.codegen(output);
             rhs.codegen(output);
+        if (type == Type.INT) {
+           
             output.addNoArgInstruction(IADD);
+        }
+	else if (type == Type.LONG) {
+           
+            output.addNoArgInstruction(LADD);
+        }
+	else if (type == Type.DOUBLE) {
+          
+            output.addNoArgInstruction(DADD);
         }
     }
 
@@ -232,9 +246,12 @@ class JMultiplyOp extends JBinaryExpression {
     public JExpression analyze(Context context) {
         lhs = (JExpression) lhs.analyze(context);
         rhs = (JExpression) rhs.analyze(context);
-        lhs.type().mustMatchExpected(line(), Type.INT);
-        rhs.type().mustMatchExpected(line(), Type.INT);
-        type = Type.INT;
+	Type[] types = new Type [] {Type.INT,Type.LONG,Type.DOUBLE};
+        lhs.type().mustMatchOneOf(line(), types);
+        rhs.type().mustMatchOneOf(line(), types);
+	if(lhs.type()==rhs.type())
+	    {        type = lhs.type(); }//Type.INT;}
+		else type = Type.INT;
         return this;
     }
 
@@ -250,7 +267,15 @@ class JMultiplyOp extends JBinaryExpression {
     public void codegen(CLEmitter output) {
         lhs.codegen(output);
         rhs.codegen(output);
-        output.addNoArgInstruction(IMUL);
+	int typeMUL = IMUL;
+	if (type == Type.INT)
+	    typeMUL = IMUL;
+	else if (type == Type.LONG)
+	    typeMUL = LMUL;
+	else if (type == Type.DOUBLE)
+	    typeMUL = DMUL;
+        output.addNoArgInstruction(typeMUL);
+	    
     }
 
 }

@@ -72,11 +72,13 @@ class JVariableDeclaration extends JStatement {
      */
 
     public JStatement analyze(Context context) {
-        for (JVariableDeclarator decl : decls) {
+	//JVariableDeclarator: super(line), name, type, initializer
+        for (JVariableDeclarator decl : decls) { 
             // Local variables are declared here (fields are
             // declared
             // in preAnalyze())
             int offset = ((LocalContext) context).nextOffset();
+	    //LocalVariableDefn extends IDefn: type, offset
             LocalVariableDefn defn = new LocalVariableDefn(decl.type().resolve(
                     context), offset);
 
@@ -95,13 +97,21 @@ class JVariableDeclaration extends JStatement {
             // All initializations must be turned into assignment
             // statements and analyzed
             if (decl.initializer() != null) {
-                defn.initialize();
+                defn.initialize();//isInitialized == true
                 JAssignOp assignOp = new JAssignOp(decl.line(), new JVariable(
+									      //Jinitializer							      
                         decl.line(), decl.name()), decl.initializer());
+	
                 assignOp.isStatementExpression = true;
                 initializations.add(new JStatementExpression(decl.line(),
                         assignOp).analyze(context));
             }
+
+	    //TODO:
+	    if (decl.type() == Type.DOUBLE || decl.type() == Type.LONG){
+		((LocalContext) context).nextOffset();
+	    }
+							  
         }
         return this;
     }

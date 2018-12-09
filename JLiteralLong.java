@@ -28,7 +28,7 @@ class JLiteralLong extends JExpression {
     }
 
     /**
-     * Generating code for an int literal means generating code to push it onto
+     * Generating code for an long literal means generating code to push it onto
      * the stack.
      * 
      * @param output
@@ -37,7 +37,8 @@ class JLiteralLong extends JExpression {
      */
 
     public void codegen(CLEmitter output) {
-        int i = Integer.parseInt(text);
+        long i = Long.parseLong(text.substring(0,text.length()-1));
+	/*
         switch (i) {
         case 0:
             output.addNoArgInstruction(ICONST_0);
@@ -62,11 +63,11 @@ class JLiteralLong extends JExpression {
                 output.addOneArgInstruction(BIPUSH, i);
             } else if (i >= 128 && i <= 32767) {
                 output.addOneArgInstruction(SIPUSH, i);
-            } else {
+		} else {*/
                 output.addLDCInstruction(i);
-            }
-        }
-    }
+		/* }
+		   }*/
+	}
 
     /**
      * {@inheritDoc}

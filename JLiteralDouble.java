@@ -28,7 +28,7 @@ class JLiteralDouble extends JExpression {
     }
 
     /**
-     * Generating code for an int literal means generating code to push it onto
+     * Generating code for an double literal means generating code to push it onto
      * the stack.
      * 
      * @param output
@@ -37,7 +37,8 @@ class JLiteralDouble extends JExpression {
      */
 
     public void codegen(CLEmitter output) {
-        int i = Integer.parseInt(text);
+        double i = Double.parseDouble(text);
+	/*
         switch (i) {
         case 0:
             output.addNoArgInstruction(ICONST_0);
@@ -62,12 +63,12 @@ class JLiteralDouble extends JExpression {
                 output.addOneArgInstruction(BIPUSH, i);
             } else if (i >= 128 && i <= 32767) {
                 output.addOneArgInstruction(SIPUSH, i);
-            } else {
+		} else { */
                 output.addLDCInstruction(i);
-            }
-        }
+		/* }
+		   }*/
     }
-
+		
     /**
      * {@inheritDoc}
      */

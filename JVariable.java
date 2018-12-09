@@ -150,7 +150,7 @@ class JVariable extends JExpression implements JLhs {
             } else {
                 // Primitive types
                 if (type == Type.INT || type == Type.BOOLEAN
-                        || type == Type.CHAR) {
+                        || type == Type.CHAR ) {
                     switch (offset) {
                     case 0:
                         output.addNoArgInstruction(ILOAD_0);
@@ -169,6 +169,44 @@ class JVariable extends JExpression implements JLhs {
                         break;
                     }
                 }
+		else if (type == Type.LONG){
+		    switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(LLOAD_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(LLOAD_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(LLOAD_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(LLOAD_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(LLOAD, offset);
+                        break;
+                    }
+		}
+		else if (type == Type.DOUBLE){
+		    switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(DLOAD_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(DLOAD_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(DLOAD_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(DLOAD_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(DLOAD, offset);
+                        break;
+                    }
+		}
             }
         }
     }
@@ -181,7 +219,7 @@ class JVariable extends JExpression implements JLhs {
      *            the code emitter (basically an abstraction for producing the
      *            .class file).
      * @param targetLabel
-     *            the label to which we should branch.
+v     *            the label to which we should branch.
      * @param onTrue
      *            do we branch on true?
      */
@@ -294,6 +332,44 @@ class JVariable extends JExpression implements JLhs {
                         break;
                     default:
                         output.addOneArgInstruction(ISTORE, offset);
+                        break;
+                    }
+                }
+		else if (type == Type.LONG) {
+                    switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(LSTORE_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(LSTORE_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(LSTORE_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(LSTORE_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(LSTORE, offset);
+                        break;
+                    }
+                }
+		  if (type == Type.DOUBLE) {
+                    switch (offset) {
+                    case 0:
+                        output.addNoArgInstruction(DSTORE_0);
+                        break;
+                    case 1:
+                        output.addNoArgInstruction(DSTORE_1);
+                        break;
+                    case 2:
+                        output.addNoArgInstruction(DSTORE_2);
+                        break;
+                    case 3:
+                        output.addNoArgInstruction(DSTORE_3);
+                        break;
+                    default:
+                        output.addOneArgInstruction(DSTORE, offset);
                         break;
                     }
                 }
