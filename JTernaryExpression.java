@@ -111,11 +111,32 @@ class JConditionalOp extends JTernaryExpression {
         super(line, "?", ":",lhs, mhs, rhs);
     }
 
+    /*
+     *check lhs (condition) is boolean
+     * check mhs and rhs as expression
+     * @param context
+     * @return analyzed AST subtree
+     */
     public JExpression analyze(Context context){
+        lhs = (JExpression) lhs.analyze(context);
+	lhs.type().mustMatchExpected(line(),Type.BOOLEAN);
+	mhs = (JExpression)mhs.analyze(context);
+	rhs = (JExpression)rhs.analyze(context);
+	mhs.type().mustMatchExpected(line(), rhs.type());
+	this.type = mhs.type();
 	return this;
     }
-
+    
     public void codegen(CLEmitter output){
+		String elseLabel = output.createLabel();
+	String endLabel = output.createLabel();
+	lhs.codegen(output, elseLabel, false);
+	mhs.codegen(output);
+	output.addBranchInstruction(GOTO, endLabel);
+	output.addLabel(elseLabel);
+	rhs.codegen(output);
+	output.addLabel(endLabel);
+	
     }
 
 }

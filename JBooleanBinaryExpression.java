@@ -125,7 +125,7 @@ class JEqualOp extends JBooleanBinaryExpression {
 }
 
 /**
- * The AST node for an equality (==) expression. Implements short-circuiting
+ * The AST node for an equality (!=) expression. Implements short-circuiting
  * branching.
  */
 
