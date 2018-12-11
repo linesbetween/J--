@@ -148,10 +148,22 @@ class JNEqualOp extends JBooleanBinaryExpression {
     }
 
      public JExpression analyze(Context context) {
+        lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), rhs.type());
+        type = Type.BOOLEAN;
         return this;
     }
       public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-      
+        lhs.codegen(output);
+        rhs.codegen(output);
+        if (lhs.type().isReference()) {
+            output.addBranchInstruction(onTrue ? IF_ACMPNE : IF_ACMPEQ,
+                    targetLabel);
+        } else {
+            output.addBranchInstruction(onTrue ? IF_ICMPNE : IF_ICMPEQ,
+                    targetLabel);
+        }
     }
 }
 
@@ -249,12 +261,28 @@ class JLogicalOrOp extends JBooleanBinaryExpression {
     }
 
        public JExpression analyze(Context context) {
-      
+	lhs = (JExpression) lhs.analyze(context);
+        rhs = (JExpression) rhs.analyze(context);
+        lhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        rhs.type().mustMatchExpected(line(), Type.BOOLEAN);
+        type = Type.BOOLEAN;
         return this;
+      
     }
 
      public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-     
+       if (onTrue) {
+           // String falseLabel = output.createLabel();
+            lhs.codegen(output, targetLabel, true);
+	    rhs.codegen(output, targetLabel, true);	    
+	    // lhs.codegen(output, falseLabel, false);
+	    // output.addLabel(falseLabel);
+        } else {
+	   String falseLabel = output.createLabel();
+            lhs.codegen(output, falseLabel, true);
+            rhs.codegen(output, targetLabel, false);
+	    output.addLabel(falseLabel);
+        }
     }
     
 }

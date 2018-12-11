@@ -126,7 +126,11 @@ class JLessThanOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-      
+        lhs.codegen(output);
+        rhs.codegen(output);
+        
+        output.addBranchInstruction(onTrue ? IF_ICMPLE : IF_ICMPGT,
+                        targetLabel);
     }
 
 }
@@ -213,7 +217,11 @@ class JGreaterEqualOp extends JComparison {
      */
 
     public void codegen(CLEmitter output, String targetLabel, boolean onTrue) {
-    
+	lhs.codegen(output);
+        rhs.codegen(output);
+        
+        output.addBranchInstruction(onTrue ? IF_ICMPGE: IF_ICMPLT,
+                        targetLabel);
     }
 
 }
