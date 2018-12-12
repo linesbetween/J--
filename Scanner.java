@@ -199,7 +199,7 @@ class Scanner {
             nextCh();
             if (ch == '=') {
                 nextCh();
-                return new TokenInfo(NEQUAL, line);
+                return new TokenInfo(EQUAL, line);
             } else {
                 return new TokenInfo(ASSIGN, line);
             }
