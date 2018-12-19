@@ -641,6 +641,7 @@ public class Parser {
      * <pre>
      *   statement ::= block
      *               | IF parExpression statement [ELSE statement]
+     *               | for ([forInit]) ; [expression];[forUpdate])statement
      *               | WHILE parExpression statement 
      *               | SWITCH parExression {{switchBlockStatementGroup}}
      *               | RETURN [expression] SEMI
@@ -660,7 +661,48 @@ public class Parser {
             JStatement consequent = statement();
             JStatement alternate = have(ELSE) ? statement() : null;
             return new JIfStatement(line, test, consequent, alternate);
-        } else if (have(WHILE)) {
+        }// for ([forInit] ; [expression];[forUpdate])statement
+	else if (have (FOR)){
+	    JForInit init = null;
+	    JExpression test = null;
+	    ArrayList <JStatement> update = new ArrayList <JStatement>();
+	    JStatement state = null;
+	    if (have(LPAREN)){
+	    if(!see(SEMI)){
+		init = forInit();
+	    }
+	    mustBe(SEMI);
+	    if(!see(SEMI)){
+		test = expression();
+	    }
+	    mustBe(SEMI);
+	    if(!see(RPAREN)){
+		update = forUpdate();
+	    }}
+	    /*
+	    if (have(SEMI)){
+		init = null;
+	    }else {
+		init  = forInit();
+		mustBe(SEMI);
+		if(have(SEMI)){
+			test = null;
+		    }else {
+		        test  = expression() ;
+			mustBe(SEMI);
+			if(have(SEMI)){
+			    update = null;
+			}else{
+			    update = forUpdate();
+			}
+		    }
+		 }   
+	    */
+	    if (have(RPAREN));
+	    state = statement();
+	    return new JForStatement(line, init, test, update, state);
+	}
+	else if (have(WHILE)) {
             JExpression test = parExpression();
             JStatement statement = statement();
             return new JWhileStatement(line, test, statement);
@@ -773,6 +815,40 @@ public class Parser {
         return expr;
     }
 
+    //forInit ::= statementExpression {, statementExpression}
+    //| [final] type variableDeclarators
+    private JForInit forInit (){
+        int line = scanner.token().line();
+	 ArrayList<JStatement> forInits = new ArrayList<JStatement>();
+	
+	 if (seeBasicType()){
+	    // Type type = type();
+	   ArrayList<String> mods = new ArrayList<String>();
+	   ArrayList<JVariableDeclarator> vdecls = variableDeclarators(type());
+	   //mustBe(SEMI);
+	   forInits.add( new JVariableDeclaration(line, mods, vdecls));
+	}
+	else {    
+	   
+	    do {
+		forInits.add(statementExpression());
+	    }while(have(COMMA));
+	}
+
+        return new JForInit(line, forInits);
+
+	
+    }
+
+    //forUpdate ::= statementExpression {, statementExpression }
+    private ArrayList<JStatement> forUpdate (){
+	ArrayList<JStatement> forUpdates = new ArrayList<JStatement>();
+	do {
+	    forUpdates.add(statementExpression());
+	}while(have(COMMA));
+	return forUpdates;
+    }
+    
      /**
      * Parse a switch block statement group.
      * 
@@ -854,6 +930,7 @@ private JExpression switchLabel(){
      * 
      * @return an AST for a variableDeclaration.
      */
+    //localVariableDeclarationStatement ::= [final] type variableDeclarators ;
 
     private JVariableDeclaration localVariableDeclarationStatement() {
         int line = scanner.token().line();
@@ -875,7 +952,7 @@ private JExpression switchLabel(){
      *            type of the variables.
      * @return a list of variable declarators.
      */
-
+    //variableDeclarators ::= variableDeclarator {, variableDeclarator }
     private ArrayList<JVariableDeclarator> variableDeclarators(Type type) {
         ArrayList<JVariableDeclarator> variableDeclarators = 
                                        new ArrayList<JVariableDeclarator>();
