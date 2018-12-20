@@ -301,7 +301,7 @@ class Scanner {
 	    }
 	    else if (ch == '='){
 		nextCh();
-		return new TokenInfo(LE, line);
+		return new TokenInfo(GE, line);
 	    }
 	    else {
 		return new TokenInfo(GT, line);

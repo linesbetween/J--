@@ -60,7 +60,19 @@ class JForStatement extends JStatement {
      */
 
     public JStatement analyze(Context context) {
-       
+	/*
+	forInitStatement = forInitStatement.analyze(context);
+
+	forExpression = forExpression.analyze(context);
+	forExpression.type().mustMatchExpected(line(), Type.BOOLEAN);
+
+	for (JStatement state : forUpdateStatement){
+	    state = (JStatement)state.anaylze(context);
+	}
+
+	statement = (JStatement)statement.anaylze(context);
+	
+	*/
         return this;
     }
 
