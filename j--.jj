@@ -266,7 +266,7 @@ TOKEN:
   < INT_LITERAL: ("0" | <NON_ZERO_DIGIT> (<DIGIT>)*) >
 | < CHAR_LITERAL: "'" (<ESC> | ~["'","\\","\n","\r"]) "'" >
 | < LONG_LITERAL: <INT_LITERAL> ("L"|"l")>
-| < EXPONENT :  ("e" | "E") ("+" | "-")? <DIGIT> > 
+| < EXPONENT :  ("e" | "E") ("+" | "-")?( <DIGIT>)(<DIGIT>)* > 
 | < SUFFIX : ("d"|"D") >
 | < DOUBLE_LITERAL  : (<DIGIT>)+ "." (<DIGIT>)* (<EXPONENT>)? (<SUFFIX>)?
     		     | "." (<DIGIT>) (<DIGIT>)* (<EXPONENT>)? (<SUFFIX>)?

@@ -49,11 +49,11 @@ class JForInit extends JStatement {
      */
 
     public JStatement analyze(Context context) {
-	/*
+	
 	for (JStatement state : statements){
-	    state = (JStatement)state.anaylze(context);
+	    state = (JStatement)state.analyze(context);
 	}
-	*/
+	
         return this;
     }
 
@@ -67,7 +67,11 @@ class JForInit extends JStatement {
      */
 
     public void codegen(CLEmitter output) {
-      
+	if (statements != null ){
+	    for(JStatement state : statements){
+		state.codegen(output);
+	    }
+	}
     }
 
     /**

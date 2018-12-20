@@ -3,6 +3,7 @@
 package jminusminus;
 
 import java.util.ArrayList;
+import static jminusminus.CLConstants.*;
 
 /**
  * The AST node for a forStatement. 
@@ -60,19 +61,19 @@ class JForStatement extends JStatement {
      */
 
     public JStatement analyze(Context context) {
-	/*
-	forInitStatement = forInitStatement.analyze(context);
+
+	forInitStatement.analyze(context);
 
 	forExpression = forExpression.analyze(context);
 	forExpression.type().mustMatchExpected(line(), Type.BOOLEAN);
 
 	for (JStatement state : forUpdateStatement){
-	    state = (JStatement)state.anaylze(context);
+	    state = (JStatement)state.analyze(context);
 	}
 
-	statement = (JStatement)statement.anaylze(context);
+	statement = (JStatement)statement.analyze(context);
 	
-	*/
+       
         return this;
     }
 
@@ -86,7 +87,23 @@ class JForStatement extends JStatement {
      */
 
     public void codegen(CLEmitter output) {
-      
+	String test = output.createLabel();
+	String out = output.createLabel();
+
+	forInitStatement.codegen(output);
+	
+	output.addLabel(test);
+	forExpression.codegen(output, out, false);
+
+	statement.codegen(output);
+
+       	for (JStatement state : forUpdateStatement){
+	    state.codegen(output);
+	}
+
+	output.addBranchInstruction(GOTO, test);
+
+	output.addLabel(out);
     }
 
     /**
